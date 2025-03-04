@@ -50,8 +50,8 @@
     <label for="B36">보유 자산</label>
     <input type="text" id="B36" placeholder="예: 100000000" />
     <span>원</span>
-    <!-- (xx만원) 표기용 -->
-    <span id="B36_million" class="hint">(0만원)</span>
+    <!-- (xx만원/xx억원/...) 표기용 -->
+    <span id="B36_million" class="hint">(0원)</span>
   </div>
 
   <!-- 연간 저축 금액 -->
@@ -59,8 +59,7 @@
     <label for="B37">연간 저축 금액</label>
     <input type="text" id="B37" placeholder="예: 12000000" />
     <span>원</span>
-    <!-- (xx만원) 표기용 -->
-    <span id="B37_million" class="hint">(0만원)</span>
+    <span id="B37_million" class="hint">(0원)</span>
   </div>
 
   <!-- 기간 (N년) -->
@@ -89,34 +88,75 @@
     은퇴 후 자산: <span id="resultValue">0</span> 원
   </div>
 
-  <!-- 계산 스크립트 -->
   <script>
     /************************************************************
-     * 1) 숫자 입력 필드에 콤마 추가 + (xx만원) 표기
+     * 1) 숫자 → 만원/억/조/경/해 단위로 변환하는 함수
      ************************************************************/
-    function formatInputWithCommasAndConvertToManwon(id) {
+    function formatKoreanUnits(valueInWon) {
+      // 음수나 0 처리를 간단화하기 위해 양수만 가정(필요시 절댓값 처리 가능)
+      if (valueInWon < 10000) {
+        // 만원 미만 => 원 그대로
+        return valueInWon.toLocaleString() + "원";
+      }
+
+      // 10^4 = 1만
+      // 10^8 = 1억
+      // 10^12 = 1조
+      // 10^16 = 1경
+      // 10^20 = 1해
+      const UNIT_1MAN = 1e4;   // 만
+      const UNIT_1EOK = 1e8;   // 억
+      const UNIT_1JO  = 1e12;  // 조
+      const UNIT_1GYEONG = 1e16; // 경
+      const UNIT_1HAE = 1e20;  // 해
+
+      // 해 이상이면 전체 숫자만 원으로 표기
+      if (valueInWon >= UNIT_1HAE) {
+        return valueInWon.toLocaleString() + "원";
+      } else if (valueInWon >= UNIT_1GYEONG) {
+        // 경 단위
+        const val = valueInWon / UNIT_1GYEONG;
+        // 소수점 표시 (원하는 자리까지 조정 가능, 여기서는 2자리 정도)
+        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "경원";
+      } else if (valueInWon >= UNIT_1JO) {
+        // 조 단위
+        const val = valueInWon / UNIT_1JO;
+        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "조원";
+      } else if (valueInWon >= UNIT_1EOK) {
+        // 억 단위
+        const val = valueInWon / UNIT_1EOK;
+        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "억원";
+      } else {
+        // 만 단위
+        const val = valueInWon / UNIT_1MAN;
+        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "만원";
+      }
+    }
+
+    /************************************************************
+     * 2) 입력 필드에 콤마 추가 + (만원/억/조/경/해) 표기
+     ************************************************************/
+    function formatInputAndDisplayUnit(id) {
       const inputElement = document.getElementById(id);
       // 기존 값에서 콤마 제거
       let rawValueString = inputElement.value.replaceAll(",", "");
       // 숫자로 변환 (NaN 방지)
       let rawValue = parseFloat(rawValueString) || 0;
-      
+
       // 3자리마다 콤마 추가
       let formattedValue = rawValue.toLocaleString();
       // 인풋에 다시 세팅
       inputElement.value = formattedValue;
 
-      // (xx만원)으로 표기할 값 계산 (만 원 단위)
-      // 예: 10,000,000 -> 1,000만원
-      let manWonValue = Math.round(rawValue / 10000);
-      let spanElement = document.getElementById(id + "_million");
+      // (xx만원/xx억원/...) 표기
+      const spanElement = document.getElementById(id + "_million");
       if (spanElement) {
-        spanElement.textContent = `(${manWonValue.toLocaleString()}만원)`;
+        spanElement.textContent = "(" + formatKoreanUnits(rawValue) + ")";
       }
     }
 
     /************************************************************
-     * 2) 낙원(은퇴) 후 자산 계산 (엑셀 공식 그대로 적용)
+     * 3) 낙원(은퇴) 후 자산 계산 (엑셀 공식 그대로 적용)
      ************************************************************/
     function calculateRetirementAsset() {
       // 각 입력값 가져오기 (보유 자산, 저축 금액은 콤마 제거 후 파싱)
@@ -132,7 +172,7 @@
       const nominalRate = B39 / 100;
       const savingGrowthRate = B40 / 100;
 
-      // Excel에서 쓰던 공식 (IF문)
+      // Excel 공식 (IF문)
       // = IF(
       //   B39 = B40,
       //   B36 * (1 + B39)^B38 + B37 * B38 * (1 + B39)^(B38 - 1),
@@ -160,25 +200,23 @@
     }
 
     /************************************************************
-     * 3) 이벤트 리스너 설정
-     *    - 보유 자산, 연간 저축 금액: 콤마+만원 표기 + 계산
-     *    - 나머지(기간, 수익률, 증가율): 단순 계산
+     * 4) 이벤트 리스너 설정
      ************************************************************/
     // 보유 자산
     const B36Input = document.getElementById('B36');
     B36Input.addEventListener('input', () => {
-      formatInputWithCommasAndConvertToManwon('B36');
+      formatInputAndDisplayUnit('B36');
       calculateRetirementAsset();
     });
 
     // 연간 저축 금액
     const B37Input = document.getElementById('B37');
     B37Input.addEventListener('input', () => {
-      formatInputWithCommasAndConvertToManwon('B37');
+      formatInputAndDisplayUnit('B37');
       calculateRetirementAsset();
     });
 
-    // 기간(N년), 명목 수익률, 저축 증가율
+    // 기간(N년), 명목 수익률, 저축 증가율 → 단순 계산만
     document.getElementById('B38').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B39').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B40').addEventListener('input', calculateRetirementAsset);
