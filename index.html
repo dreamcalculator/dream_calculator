@@ -165,7 +165,6 @@
   <!-- =========================
        3) 미래 목돈 → 인출 가능한 돈
       ========================= -->
-  <!-- 설명 추가: '그럼, 위의 돈으로 XX년 후 매달 얼마를 꺼내서 사용할 수 있을까요?' -->
   <p>
     그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
   </p>
@@ -217,28 +216,7 @@
   <!-- 구분선 -->
   <div class="divider"></div>
 
-  <!-- =========================
-       4) 생존 계산기
-      ========================= -->
-  <h2>생존 계산기</h2>
-  <p>
-    그렇다면 미래에 정해진 돈을 매달 인출하되, 인플레이션에 따라 매년 생활비가 늘어난다면, 언제 이 돈이 고갈될까요?<br />
-    <strong>** 이 때, 원하는 월 생활비는 '현재가치' 기준으로 적어주세요. 
-    예를 들어, 현재 기준으로 월 500만원의 생활비를 원하면 5,000,000을 입력하세요.</strong>
-  </p>
-
-  <!-- 현재 기준 월 생활비 (C47) -->
-  <div class="form-group">
-    <label for="C47">현재 기준 월 생활비</label>
-    <input type="text" id="C47" placeholder="예: 5,000,000" />
-    <span>원</span>
-    <span id="C47_million" class="hint">(0원)</span>
-  </div>
-
-  <div class="result">
-    몇 년 버틸 수 있을까? 
-    <span id="survivalResult">∞</span> 년
-  </div>
+  <!-- 생존 계산기 부분 삭제됨 -->
 
   <script>
     /************************************************************
@@ -412,80 +390,6 @@
     }
 
     /************************************************************
-     * (F) 생존 계산기
-     *  공식(엑셀 IF문)을 JS로 변환
-     *    =IF(
-     *      OR( 명목수익률 <= 인플레이션, 12*미래목돈*(1+인플레이션)^연수 = 0 ),
-     *      "∞",
-     *      IF(
-     *        (현재기준월생활비*(명목수익률 - 인플레이션)) / [12*미래목돈*(1+인플레이션)^연수*(1+명목수익률)] >= 1,
-     *        "∞",
-     *        LN(1 - (...)) / LN((1+인플레이션)/(1+명목수익률))
-     *      )
-     *    )
-     ************************************************************/
-    function calculateSurvival() {
-      // 1) 필요한 값 가져오기
-      const B19 = parseFloat(document.getElementById('B19').value) || 0; // 연수
-      const rawFutureMoney = document.getElementById('B16').value.replaceAll(",", "") || "0"; // 미래 목돈
-      const futureMoney = parseFloat(rawFutureMoney);
-
-      // 명목 수익률 => 상단 B39
-      const nominalRate = (parseFloat(document.getElementById('B39').value) || 0) / 100;
-      // 인플레이션 => 하단 B18
-      const inflation = (parseFloat(document.getElementById('B18').value) || 0) / 100;
-
-      // 현재 기준 월 생활비 => C47
-      const rawMonthly = document.getElementById('C47').value.replaceAll(",", "") || "0";
-      const monthlyExpenseNow = parseFloat(rawMonthly);
-
-      // 2) 조건 체크
-      // if (명목수익률 <= 인플레이션) OR (12*미래목돈*(1+인플레이션)^연수 == 0)
-      if (nominalRate <= inflation || (12 * futureMoney * Math.pow(1+inflation, B19) === 0)) {
-        document.getElementById('survivalResult').textContent = "∞";
-        return;
-      }
-
-      // 임시 변수 계산
-      // X = (현재기준월생활비 * (명목수익률 - 인플레이션)) / (12*미래목돈*(1+인플레이션)^연수*(1+명목수익률))
-      const numerator   = monthlyExpenseNow * (nominalRate - inflation);
-      const denominator = 12 * futureMoney * Math.pow((1 + inflation), B19) * (1 + nominalRate);
-      const X = numerator / denominator;
-
-      // if X >= 1 => "∞"
-      if (X >= 1) {
-        document.getElementById('survivalResult').textContent = "∞";
-        return;
-      }
-
-      // 3) 실제 계산
-      // LN(1 - X) / LN((1+inflation)/(1+nominalRate))
-      const topVal = 1 - X;
-      if (topVal <= 0) {
-        // 수식 상 0 이하라면 로그 불가 => "∞" 처리
-        document.getElementById('survivalResult').textContent = "∞";
-        return;
-      }
-      const bottomVal = Math.log((1 + inflation)/(1 + nominalRate));
-
-      // bottomVal이 0 이거나 음수면 => "∞"
-      if (bottomVal <= 0) {
-        document.getElementById('survivalResult').textContent = "∞";
-        return;
-      }
-
-      const survivalYears = Math.log(topVal) / bottomVal;
-      // 예: 28.28년
-      const rounded = Math.round(survivalYears * 100) / 100; // 소수 둘째 자리
-      // 음수인 경우도 대비
-      if (rounded < 0) {
-        document.getElementById('survivalResult').textContent = "∞";
-      } else {
-        document.getElementById('survivalResult').textContent = rounded.toLocaleString();
-      }
-    }
-
-    /************************************************************
      * (G) 자동 동기화 로직
      *     중간 계산기(B9,B10,B11) → 하단(B16,B18,B19)
      ************************************************************/
@@ -509,8 +413,6 @@
 
       // 인출 계산
       calculateWithdrawal();
-      // 생존 계산
-      calculateSurvival();
     }
 
     /************************************************************
@@ -554,34 +456,21 @@
       userModifiedFutureMoney = true;
       formatInputAndDisplayUnit('B16');
       calculateWithdrawal();
-      calculateSurvival();
     });
-    document.getElementById('B17').addEventListener('input', () => {
-      calculateWithdrawal();
-      calculateSurvival();
-    });
+    document.getElementById('B17').addEventListener('input', calculateWithdrawal);
     document.getElementById('B18').addEventListener('input', () => {
       userModifiedInflation2 = true;
       calculateWithdrawal();
-      calculateSurvival();
     });
     document.getElementById('B19').addEventListener('input', () => {
       userModifiedYears2 = true;
       calculateWithdrawal();
-      calculateSurvival();
-    });
-
-    // 생존 계산기: 현재 기준 월 생활비(C47)
-    document.getElementById('C47').addEventListener('input', () => {
-      formatInputAndDisplayUnit('C47');
-      calculateSurvival();
     });
 
     // 초기 계산 실행
     calculateRetirementAsset(); // 상단 → 중간 → 하단 연동
     calculatePresentValue();
     calculateWithdrawal();
-    calculateSurvival();
   </script>
 </body>
 </html>
