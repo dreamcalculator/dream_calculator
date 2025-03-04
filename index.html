@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <title>자산 목표 계산기</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+      line-height: 1.6;
+    }
+    h1, h2, h3 {
+      margin-bottom: 10px;
+    }
+    .calculator-section, .column-section {
+      border: 1px solid #ccc;
+      padding: 20px;
+      margin-bottom: 30px;
+      border-radius: 8px;
+    }
+    .calculator-section input[type="number"] {
+      width: 120px;
+      margin-right: 10px;
+    }
+    .results-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+    .results-table th, .results-table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: right;
+    }
+    .results-table th {
+      background-color: #f5f5f5;
+      text-align: center;
+    }
+    .blog-links ul {
+      list-style-type: square;
+      padding-left: 20px;
+    }
+    .blog-links a {
+      color: #337ab7;
+      text-decoration: none;
+    }
+    .blog-links a:hover {
+      text-decoration: underline;
+    }
+    .footer {
+      margin-top: 40px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <h1>나의 자산 목표는?</h1>
+
+  <!-- 자산 목표 계산 섹션 -->
+  <div class="calculator-section">
+    <h2>자산 목표 계산기</h2>
+    <p>월 납입 금액, 연이율, 납입 개월 수를 입력하면 간단한 예상 금액을 계산합니다.</p>
+    <div>
+      <label for="monthlyDeposit">월 납입액(원): </label>
+      <input type="number" id="monthlyDeposit" placeholder="예: 300000" />
+    </div>
+    <div>
+      <label for="annualRate">연이율(%): </label>
+      <input type="number" id="annualRate" placeholder="예: 5" step="0.1" />
+    </div>
+    <div>
+      <label for="months">납입 개월 수: </label>
+      <input type="number" id="months" placeholder="예: 120" />
+    </div>
+    <button id="calculateBtn">계산하기</button>
+
+    <table class="results-table" id="resultsTable" style="display:none;">
+      <thead>
+        <tr>
+          <th>개월</th>
+          <th>납입금(원)</th>
+          <th>이자 누적(원)</th>
+          <th>총액(원)</th>
+        </tr>
+      </thead>
+      <tbody id="resultsBody"></tbody>
+    </table>
+  </div>
+
+  <!-- 칼럼/블로그 섹션 -->
+  <div class="column-section">
+    <h2>칼럼 모음</h2>
+    <p>아래 칼럼(블로그 글)들을 통해 재무 설계, 투자 방법 등을 알아보세요.</p>
+    <div class="blog-links">
+      <ul>
+        <!-- 블로그 글 링크 예시 -->
+        <li><a href="https://yourblog.com/post1" target="_blank">재무 설계의 기본</a></li>
+        <li><a href="https://yourblog.com/post2" target="_blank">투자 상품 비교 가이드</a></li>
+        <li><a href="https://yourblog.com/post3" target="_blank">자산 포트폴리오 구성 팁</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 푸터(하단 안내) -->
+  <div class="footer">
+    <p>Copyright © 2025 재무 설계 사이트</p>
+  </div>
+
+  <!-- 간단한 계산 로직 (JS) -->
+  <script>
+    // 복리 계산이 아니라, 단순 이자(혹은 적금 형식) 계산 예시
+    // 연이율을 월단위로 환산 후, 매월 납입액에 대한 예상 총액을 표시
+    document.getElementById('calculateBtn').addEventListener('click', function() {
+      const monthlyDeposit = parseFloat(document.getElementById('monthlyDeposit').value);
+      const annualRate = parseFloat(document.getElementById('annualRate').value);
+      const months = parseInt(document.getElementById('months').value);
+
+      if (isNaN(monthlyDeposit) || isNaN(annualRate) || isNaN(months)) {
+        alert("입력값을 확인해주세요.");
+        return;
+      }
+
+      // 월 이율(%) = 연이율 / 12
+      const monthlyRate = annualRate / 12 / 100;
+
+      // 테이블 초기화
+      const resultsTable = document.getElementById('resultsTable');
+      const resultsBody = document.getElementById('resultsBody');
+      resultsBody.innerHTML = '';
+      resultsTable.style.display = 'none';
+
+      let totalPrincipal = 0;  // 납입 원금 누적
+      let totalInterest = 0;   // 이자 누적
+      let totalAmount = 0;     // 총액
+
+      for (let i = 1; i <= months; i++) {
+        // 이번 달에 납입한 원금
+        totalPrincipal += monthlyDeposit;
+
+        // 이번 달 이자 계산 (잔고에 대한 월이자 가정)
+        // 간단 계산 예시: (이전 달까지의 잔고 + 이번 달 납입액/2)에 대해 이자를 부과
+        // (적금 공식은 실제 은행마다 다를 수 있음)
+        let averageBalance = (totalAmount + (totalAmount + monthlyDeposit)) / 2;
+        let interestThisMonth = averageBalance * monthlyRate;
+        totalInterest += interestThisMonth;
+
+        // 이번 달 말 총액
+        totalAmount = totalPrincipal + totalInterest;
+
+        // 행 추가
+        const row = document.createElement('tr');
+        const monthCell = document.createElement('td');
+        const principalCell = document.createElement('td');
+        const interestCell = document.createElement('td');
+        const totalCell = document.createElement('td');
+
+        monthCell.textContent = i + "개월";
+        principalCell.textContent = totalPrincipal.toLocaleString();
+        interestCell.textContent = Math.round(totalInterest).toLocaleString();
+        totalCell.textContent = Math.round(totalAmount).toLocaleString();
+
+        row.appendChild(monthCell);
+        row.appendChild(principalCell);
+        row.appendChild(interestCell);
+        row.appendChild(totalCell);
+        resultsBody.appendChild(row);
+      }
+
+      resultsTable.style.display = 'table';
+    });
+  </script>
+</body>
+</html>
