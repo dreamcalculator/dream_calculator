@@ -39,6 +39,12 @@
       color: #666;
       margin-left: 10px;
     }
+    /* 괄호 안 수치를 20% 더 작게 보이도록 설정 */
+    .detail {
+      font-size: 0.8em; 
+      color: #333;
+      margin-left: 6px;
+    }
   </style>
 </head>
 <body>
@@ -49,10 +55,8 @@
   <!-- 보유 자산 -->
   <div class="form-group">
     <label for="B36">보유 자산</label>
-    <!-- 예시 숫자에 콤마를 적용한 placeholder -->
     <input type="text" id="B36" placeholder="예: 100,000,000" />
     <span>원</span>
-    <!-- (xx만원/xx억원/...) 표기용 -->
     <span id="B36_million" class="hint">(0원)</span>
   </div>
 
@@ -87,7 +91,10 @@
 
   <!-- 계산 결과 -->
   <div class="result">
-    은퇴 후 자산: <span id="resultValue">0</span>
+    은퇴 후 자산: 
+    <span id="resultValue">0원</span>
+    <!-- 괄호 안에 전체 숫자를 20% 작은 폰트로 표기 -->
+    <span id="resultValueDetail" class="detail">(0원)</span>
   </div>
 
   <script>
@@ -95,20 +102,19 @@
      * 1) 숫자 → 만원/억/조/경/해 단위로 변환하는 함수
      ************************************************************/
     function formatKoreanUnits(valueInWon) {
-      // valueInWon이 10000원 미만이면 원 그대로
       if (valueInWon < 10000) {
+        // 10,000원 미만 → 그냥 '원'
         return valueInWon.toLocaleString() + "원";
       }
 
-      // 단위 정의
-      const UNIT_1MAN = 1e4;    // 만 (10,000)
-      const UNIT_1EOK = 1e8;    // 억 (100,000,000)
-      const UNIT_1JO  = 1e12;   // 조 (1,000,000,000,000)
+      const UNIT_1MAN = 1e4;     // 만
+      const UNIT_1EOK = 1e8;     // 억
+      const UNIT_1JO  = 1e12;    // 조
       const UNIT_1GYEONG = 1e16; // 경
-      const UNIT_1HAE = 1e20;   // 해
+      const UNIT_1HAE = 1e20;    // 해
 
-      // 해 이상이면 원 단위 그대로 표기
       if (valueInWon >= UNIT_1HAE) {
+        // 해(10^20) 이상 → 그대로 원 표기
         return valueInWon.toLocaleString() + "원";
       } else if (valueInWon >= UNIT_1GYEONG) {
         const val = valueInWon / UNIT_1GYEONG;
@@ -130,7 +136,6 @@
      ************************************************************/
     function formatInputAndDisplayUnit(id) {
       const inputElement = document.getElementById(id);
-      // 기존 값에서 콤마 제거
       let rawValueString = inputElement.value.replaceAll(",", "");
       let rawValue = parseFloat(rawValueString) || 0;
 
@@ -154,25 +159,39 @@
       const rawB37 = document.getElementById('B37').value.replaceAll(",", "") || "0";
       const B36 = parseFloat(rawB36);
       const B37 = parseFloat(rawB37);
-      const B38 = parseInt(document.getElementById('B38').value) || 0;    // 기간(년)
-      const B39 = parseFloat(document.getElementById('B39').value) || 0;  // 명목 수익률(%)
-      const B40 = parseFloat(document.getElementById('B40').value) || 0;  // 저축 증가율(%)
+      const B38 = parseInt(document.getElementById('B38').value) || 0;   
+      const B39 = parseFloat(document.getElementById('B39').value) || 0; 
+      const B40 = parseFloat(document.getElementById('B40').value) || 0; 
 
-      // 퍼센트를 소수로 변환
+      // 퍼센트 → 소수
       const nominalRate = B39 / 100;
       const savingGrowthRate = B40 / 100;
 
       let result = 0;
       if (nominalRate === savingGrowthRate) {
+        // B39 == B40
         result = B36 * Math.pow(1 + nominalRate, B38) +
                  B37 * B38 * Math.pow(1 + nominalRate, B38 - 1);
       } else {
+        // B39 != B40
         result = B36 * Math.pow(1 + nominalRate, B38) +
-                 B37 * ((Math.pow(1 + nominalRate, B38) - Math.pow(1 + savingGrowthRate, B38)) / (nominalRate - savingGrowthRate));
+                 B37 * (
+                   (Math.pow(1 + nominalRate, B38) - Math.pow(1 + savingGrowthRate, B38))
+                   / (nominalRate - savingGrowthRate)
+                 );
       }
 
-      // 결과를 단위 변환 적용하여 표시
-      document.getElementById('resultValue').textContent = formatKoreanUnits(Math.round(result));
+      // 반올림된 결과값
+      const roundedResult = Math.round(result);
+
+      // 1) 단위 변환된 결과(만/억/조 등)
+      const formattedUnit = formatKoreanUnits(roundedResult);
+      // 2) 전체 숫자 (3자리 콤마)
+      const formattedRaw = roundedResult.toLocaleString() + "원";
+
+      // 표시
+      document.getElementById('resultValue').textContent = formattedUnit;
+      document.getElementById('resultValueDetail').textContent = "(" + formattedRaw + ")";
     }
 
     /************************************************************
@@ -192,7 +211,7 @@
       calculateRetirementAsset();
     });
 
-    // 기간, 명목 수익률, 저축 증가율은 단순 계산 이벤트 설정
+    // 기간(N년), 명목 수익률, 저축 증가율 → 단순 계산
     document.getElementById('B38').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B39').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B40').addEventListener('input', calculateRetirementAsset);
