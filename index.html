@@ -158,6 +158,12 @@
 
   <script>
     /************************************************************
+     * (A) 사용자 수동 수정 여부를 체크하기 위한 플래그
+     ************************************************************/
+    let userModifiedInflation = false; // 하단 인플레이션(B10) 수동 수정했는지
+    let userModifiedYears = false;     // 하단 연수(B11) 수동 수정했는지
+
+    /************************************************************
      * 공통 함수 1) 숫자 → 만원/억/조/경/해 단위 변환
      ************************************************************/
     function formatKoreanUnits(valueInWon) {
@@ -207,7 +213,7 @@
     }
 
     /************************************************************
-     * 낙원 계산기: 은퇴 후 자산 계산
+     * (B) 낙원 계산기: 은퇴 후 자산 계산
      ************************************************************/
     function calculateRetirementAsset() {
       // 1) 값 가져오기 (콤마 제거)
@@ -238,8 +244,8 @@
 
       // 4) 표시
       const roundedResult = Math.round(result);
-      const formattedUnit = formatKoreanUnits(roundedResult);  // 만/억/조
-      const formattedRaw = roundedResult.toLocaleString() + "원"; // 전체 원
+      const formattedUnit = formatKoreanUnits(roundedResult);  
+      const formattedRaw = roundedResult.toLocaleString() + "원"; 
 
       document.getElementById('resultValue').textContent = formattedUnit;
       document.getElementById('resultValueDetail').textContent = "(" + formattedRaw + ")";
@@ -252,16 +258,26 @@
       B9Input.value = roundedResult.toLocaleString(); // 콤마 표시
       formatInputAndDisplayUnit('B9');
       calculatePresentValue(); // 자동으로 현재 가치 재계산
+
+      // 7) 하단 인플레이션, 연수도 자동 세팅 (단, 사용자가 아직 수정하지 않았다면)
+      //    B40 → B10, B38 → B11
+      if (!userModifiedInflation) {
+        document.getElementById('B10').value = B40.toString(); 
+        calculatePresentValue();
+      }
+      if (!userModifiedYears) {
+        document.getElementById('B11').value = B38.toString(); 
+        calculatePresentValue();
+      }
     }
 
     /************************************************************
-     * 낙원 계산기: 복사하기 버튼
+     * (C) 낙원 계산기: 복사하기 버튼
      ************************************************************/
     function copyResultToClipboard() {
       // 전체 숫자(소괄호 안)의 텍스트를 복사
       const detailText = document.getElementById('resultValueDetail').textContent;
       // 예: "(2,582,000,000원)"
-      // 괄호 없이 복사하고 싶다면 slice 등을 사용
       const textToCopy = detailText.replace(/\(|\)/g, ""); // 괄호 제거
 
       navigator.clipboard.writeText(textToCopy)
@@ -270,15 +286,15 @@
     }
 
     /************************************************************
-     * 미래 가치 → 현재 가치 환산
-     *  B12 = B9 / (1 + B10)^B11
+     * (D) 미래 가치 → 현재 가치 환산
+     *     B12 = B9 / (1 + B10)^B11
      ************************************************************/
     function calculatePresentValue() {
       // 1) 값 가져오기
       const rawB9  = document.getElementById('B9').value.replaceAll(",", "") || "0";
-      const B9  = parseFloat(rawB9); // 미래 가치
-      const B10 = parseFloat(document.getElementById('B10').value) || 0; // 인플레이션(%)
-      const B11 = parseInt(document.getElementById('B11').value) || 0;   // 연수
+      const B9  = parseFloat(rawB9); 
+      const B10 = parseFloat(document.getElementById('B10').value) || 0; 
+      const B11 = parseInt(document.getElementById('B11').value) || 0;  
 
       // 2) 공식
       const inflationRate = B10 / 100; 
@@ -294,7 +310,7 @@
     }
 
     /************************************************************
-     * 이벤트 리스너
+     * (E) 이벤트 리스너
      ************************************************************/
     // 낙원 계산기
     document.getElementById('B36').addEventListener('input', () => {
@@ -312,13 +328,22 @@
     // 복사 버튼
     document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
 
-    // 미래 가치 → 현재 가치 환산
+    // 하단 계산기
+    // B9(미래 가치)는 콤마/단위 처리 후 재계산
     document.getElementById('B9').addEventListener('input', () => {
       formatInputAndDisplayUnit('B9');
       calculatePresentValue();
     });
-    document.getElementById('B10').addEventListener('input', calculatePresentValue);
-    document.getElementById('B11').addEventListener('input', calculatePresentValue);
+
+    // B10, B11을 사용자가 직접 수정한 경우 → userModified* 플래그를 true
+    document.getElementById('B10').addEventListener('input', () => {
+      userModifiedInflation = true;
+      calculatePresentValue();
+    });
+    document.getElementById('B11').addEventListener('input', () => {
+      userModifiedYears = true;
+      calculatePresentValue();
+    });
 
     // 초기 계산
     calculateRetirementAsset();
