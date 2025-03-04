@@ -20,7 +20,7 @@
       align-items: center;
     }
     .form-group label {
-      width: 120px;
+      width: 120px; /* 모든 라벨 폭을 동일하게 */
     }
     .form-group input {
       width: 150px;
@@ -101,10 +101,11 @@
     <label for="B40">저축 증가율<br>(물가 상승률)</label>
     <input type="number" id="B40" placeholder="예: 3" step="0.1" />
     <span>%</span>
-    <span class="hint">
-      물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
-    </span>
   </div>
+  <!-- 물가 상승 안내 문구: 아래 줄로 분리 -->
+  <p class="hint" style="margin-left:120px;">
+    물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
+  </p>
 
   <!-- 계산 결과 + 복사 버튼 -->
   <div class="result">
@@ -124,7 +125,7 @@
     년 후의 기준 가치입니다. 현재 기준으로는 얼마의 가치일까요? 환산해보겠습니다.
   </p>
 
-  <h2>미래 가치, 현재로 환산</h2>
+  <h2>미래 목돈을 현재로 계산</h2>
 
   <!-- 미래 가치 -->
   <div class="form-group">
@@ -163,7 +164,6 @@
       if (valueInWon < 10000) {
         return valueInWon.toLocaleString() + "원";
       }
-
       const UNIT_1MAN = 1e4;     // 만
       const UNIT_1EOK = 1e8;     // 억
       const UNIT_1JO  = 1e12;    // 조
@@ -248,7 +248,6 @@
       document.getElementById('periodYears').textContent = B38.toString();
 
       // 6) 미래 가치 환산 계산기의 "미래 가치(B9)"도 자동 세팅
-      //    (사용자가 직접 수정할 수도 있음)
       const B9Input = document.getElementById('B9');
       B9Input.value = roundedResult.toLocaleString(); // 콤마 표시
       formatInputAndDisplayUnit('B9');
@@ -262,8 +261,8 @@
       // 전체 숫자(소괄호 안)의 텍스트를 복사
       const detailText = document.getElementById('resultValueDetail').textContent;
       // 예: "(2,582,000,000원)"
-      // 괄호 없이 복사하고 싶다면 slice 등을 사용 가능
-      const textToCopy = detailText.replace(/\(|\)/g, ""); // 괄호 제거 예시
+      // 괄호 없이 복사하고 싶다면 slice 등을 사용
+      const textToCopy = detailText.replace(/\(|\)/g, ""); // 괄호 제거
 
       navigator.clipboard.writeText(textToCopy)
         .then(() => alert("복사 완료!"))
@@ -282,7 +281,6 @@
       const B11 = parseInt(document.getElementById('B11').value) || 0;   // 연수
 
       // 2) 공식
-      // B12 = B9 / (1 + B10)^B11
       const inflationRate = B10 / 100; 
       const present = B9 / Math.pow((1 + inflationRate), B11);
 
@@ -296,38 +294,33 @@
     }
 
     /************************************************************
-     * 이벤트 리스너 설정
+     * 이벤트 리스너
      ************************************************************/
-    // 낙원 계산기 입력들
-    const B36Input = document.getElementById('B36');
-    B36Input.addEventListener('input', () => {
+    // 낙원 계산기
+    document.getElementById('B36').addEventListener('input', () => {
       formatInputAndDisplayUnit('B36');
       calculateRetirementAsset();
     });
-
-    const B37Input = document.getElementById('B37');
-    B37Input.addEventListener('input', () => {
+    document.getElementById('B37').addEventListener('input', () => {
       formatInputAndDisplayUnit('B37');
       calculateRetirementAsset();
     });
-
     document.getElementById('B38').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B39').addEventListener('input', calculateRetirementAsset);
     document.getElementById('B40').addEventListener('input', calculateRetirementAsset);
 
-    // 복사하기 버튼
+    // 복사 버튼
     document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
 
-    // 미래 가치 → 현재 가치 환산 입력들
-    const B9Input = document.getElementById('B9');
-    B9Input.addEventListener('input', () => {
+    // 미래 가치 → 현재 가치 환산
+    document.getElementById('B9').addEventListener('input', () => {
       formatInputAndDisplayUnit('B9');
       calculatePresentValue();
     });
     document.getElementById('B10').addEventListener('input', calculatePresentValue);
     document.getElementById('B11').addEventListener('input', calculatePresentValue);
 
-    // 페이지 로드 시 기본 계산 수행(필요하다면 초기값 설정)
+    // 초기 계산
     calculateRetirementAsset();
   </script>
 </body>
