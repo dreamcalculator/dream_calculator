@@ -57,7 +57,7 @@
 <body>
 
   <!-- =========================
-       1) 낙원 계산기 섹션
+       1) 낙원 계산기
       ========================= -->
   <h1>낙원 계산기</h1>
   <p>
@@ -104,7 +104,7 @@
     <input type="number" id="B40" placeholder="예: 3" step="0.1" />
     <span>%</span>
   </div>
-  <!-- 물가 상승 안내 문구: 아래 줄로 분리 -->
+  <!-- 물가 상승 안내 문구 -->
   <p class="hint" style="margin-left:120px;">
     물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
   </p>
@@ -134,7 +134,7 @@
   <!-- 미래 가치 (B9) -->
   <div class="form-group">
     <label for="B9">미래 가치</label>
-    <input type="text" id="B9" placeholder="예: 0" />
+    <input type="text" id="B9" placeholder="0" />
     <span>원</span>
     <span id="B9_million" class="hint">(0원)</span>
   </div>
@@ -171,7 +171,7 @@
   <!-- 미래 목돈 (B16) -->
   <div class="form-group">
     <label for="B16">미래 목돈</label>
-    <input type="text" id="B16" placeholder="예: 10,000,000,000" />
+    <input type="text" id="B16" placeholder="0" />
     <span>원</span>
     <span id="B16_million" class="hint">(0원)</span>
   </div>
@@ -179,7 +179,8 @@
   <!-- 인출율 (B17) -->
   <div class="form-group">
     <label for="B17">인출율</label>
-    <input type="number" id="B17" placeholder="예: 3.5" step="0.1" />
+    <!-- 기본값 3.5% -->
+    <input type="number" id="B17" value="3.5" step="0.1" />
     <span>%</span>
   </div>
 
@@ -197,7 +198,7 @@
     <span>년</span>
   </div>
 
-  <!-- 가능 월 소득 + 현재 가치 -->
+  <!-- 결과: 가능 월 소득 + 현재 가치 -->
   <div class="result">
     가능 월 소득: 
     <span id="possibleIncome">0원</span>
@@ -211,16 +212,16 @@
 
   <script>
     /************************************************************
-     * (A) 사용자 수동 수정 여부를 체크하기 위한 플래그(하단들)
+     * (A) 사용자 수동 수정 여부를 체크하기 위한 플래그
      ************************************************************/
-    let userModifiedInflation   = false; // 미래 목돈을 현재로 계산(B10, B11) 섹션
+    let userModifiedInflation   = false; // 중간 계산기(B10, B11)
     let userModifiedYears       = false;
-    let userModifiedInflation2  = false; // 인출 계산(B18, B19) 섹션
-    let userModifiedYears2      = false;
-    let userModifiedFutureMoney = false; // B16
+    let userModifiedFutureMoney = false; // 하단 B16
+    let userModifiedInflation2  = false; // 하단 B18
+    let userModifiedYears2      = false; // 하단 B19
 
     /************************************************************
-     * 공통 함수 1) 숫자 → 만원/억/조/경/해 단위 변환
+     * 공통 함수 1) 숫자 → 만/억/조/경/해 변환
      ************************************************************/
     function formatKoreanUnits(valueInWon) {
       if (valueInWon < 10000) {
@@ -250,7 +251,7 @@
     }
 
     /************************************************************
-     * 공통 함수 2) 입력 필드에 콤마 + (만원/억/조/경/해) 표시
+     * 공통 함수 2) 입력 필드 콤마 + (만원/억/조/경/해) 표시
      ************************************************************/
     function formatInputAndDisplayUnit(id) {
       const inputElement = document.getElementById(id);
@@ -272,7 +273,7 @@
      * (B) 낙원 계산기: 은퇴 후 자산 계산
      ************************************************************/
     function calculateRetirementAsset() {
-      // 1) 값 가져오기
+      // 값 가져오기
       const rawB36 = document.getElementById('B36').value.replaceAll(",", "") || "0";
       const rawB37 = document.getElementById('B37').value.replaceAll(",", "") || "0";
       const B36 = parseFloat(rawB36);
@@ -305,17 +306,21 @@
       // "XX년 후" 문구
       document.getElementById('periodYears').textContent = B38.toString();
 
-      // (C9) 미래 가치(B9)에 세팅
+      // 중간 계산기(B9) 값 자동 세팅 (미래 가치)
       const B9Input = document.getElementById('B9');
       B9Input.value = roundedResult.toLocaleString();
       formatInputAndDisplayUnit('B9');
+
+      // 중간 인플레이션/연수 자동 세팅 (단, 사용자가 직접 수정 전)
       if (!userModifiedInflation) {
-        document.getElementById('B10').value = B40.toString(); 
+        document.getElementById('B10').value = B40.toString();
       }
       if (!userModifiedYears) {
-        document.getElementById('B11').value = B38.toString(); 
+        document.getElementById('B11').value = B38.toString();
       }
-      calculatePresentValue();
+
+      calculatePresentValue();  // 중간 계산기 재계산
+      syncWithdrawalInputs();   // 하단 인출 계산기와 동기화
     }
 
     /************************************************************
@@ -348,26 +353,24 @@
     }
 
     /************************************************************
-     * (E) 미래 목돈 -> 인출 가능한 돈
+     * (E) 미래 목돈 → 인출 가능한 돈
      *     B21 = B16*(B17/100)/12
      *     B22 = B21 / (1 + B18/100)^B19
      ************************************************************/
     function calculateWithdrawal() {
-      // 1) 값 가져오기
+      // 값 가져오기
       const rawB16 = document.getElementById('B16').value.replaceAll(",", "") || "0";
       const B16 = parseFloat(rawB16);
       const B17 = parseFloat(document.getElementById('B17').value) || 0;
       const B18 = parseFloat(document.getElementById('B18').value) || 0;
       const B19 = parseInt(document.getElementById('B19').value) || 0;
 
-      // 2) 가능 월 소득
-      //    인출율(%) → B17/100
-      const monthlyIncome = (B16 * (B17/100)) / 12;
+      // 가능 월 소득
+      const monthlyIncome = (B16 * (B17 / 100)) / 12;
 
-      // 3) 현재 가치
-      const presentVal = monthlyIncome / Math.pow((1 + B18/100), B19);
+      // 현재 가치
+      const presentVal = monthlyIncome / Math.pow((1 + B18 / 100), B19);
 
-      // 반올림
       const roundedMonthly = Math.round(monthlyIncome);
       const roundedPresentVal = Math.round(presentVal);
 
@@ -382,25 +385,23 @@
     }
 
     /************************************************************
-     * (F) 자동 동기화 로직 (미래 목돈, 인플레이션, 연수)
-     *     - 상단 “미래 가치(B9)” → 인출 계산 “미래 목돈(B16)”
-     *     - 상단 “인플레이션(B10)” → 인출 계산 “인플레이션(B18)”
-     *     - 상단 “연수(B11)” → 인출 계산 “연수(B19)”
-     *     - 사용자가 직접 수정 시, 덮어쓰지 않음
+     * (F) 자동 동기화 로직
+     *     - 중간 계산기(B9,B10,B11) → 하단(B16,B18,B19)
+     *     - 사용자가 하단을 직접 수정하기 전까지는 자동 반영
      ************************************************************/
     function syncWithdrawalInputs() {
-      // 상단 B9 → 하단 B16
+      // B9 → B16
       if (!userModifiedFutureMoney) {
         const rawB9 = document.getElementById('B9').value.replaceAll(",", "") || "0";
         document.getElementById('B16').value = parseFloat(rawB9).toLocaleString();
         formatInputAndDisplayUnit('B16');
       }
-      // 상단 B10 → 하단 B18
+      // B10 → B18
       if (!userModifiedInflation2) {
         const B10 = parseFloat(document.getElementById('B10').value) || 0;
         document.getElementById('B18').value = B10.toString();
       }
-      // 상단 B11 → 하단 B19
+      // B11 → B19
       if (!userModifiedYears2) {
         const B11 = parseInt(document.getElementById('B11').value) || 0;
         document.getElementById('B19').value = B11.toString();
@@ -411,7 +412,7 @@
     /************************************************************
      * (G) 이벤트 리스너
      ************************************************************/
-    // 1) 낙원 계산기
+    // 상단 낙원 계산기
     document.getElementById('B36').addEventListener('input', () => {
       formatInputAndDisplayUnit('B36');
       calculateRetirementAsset();
@@ -427,11 +428,11 @@
     // 복사하기 버튼
     document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
 
-    // 2) 미래 목돈을 현재로 계산
+    // 중간 계산기(B9,B10,B11)
     document.getElementById('B9').addEventListener('input', () => {
       formatInputAndDisplayUnit('B9');
       calculatePresentValue();
-      syncWithdrawalInputs(); // 인출 계산 섹션과 동기화
+      syncWithdrawalInputs();
     });
     document.getElementById('B10').addEventListener('input', () => {
       userModifiedInflation = true;
@@ -444,7 +445,7 @@
       syncWithdrawalInputs();
     });
 
-    // 3) 미래 목돈 -> 인출 가능한 돈
+    // 하단 인출 계산기(B16,B17,B18,B19)
     document.getElementById('B16').addEventListener('input', () => {
       userModifiedFutureMoney = true;
       formatInputAndDisplayUnit('B16');
@@ -460,10 +461,10 @@
       calculateWithdrawal();
     });
 
-    // 초기 계산
-    calculateRetirementAsset();   // 상단 은퇴 자산
-    calculatePresentValue();      // 미래 목돈 → 현재 가치
-    calculateWithdrawal();        // 인출 계산
+    // 초기 계산 실행
+    calculateRetirementAsset();
+    calculatePresentValue();
+    calculateWithdrawal();
   </script>
 </body>
 </html>
