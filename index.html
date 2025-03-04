@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
-  <title>은퇴 후 자산 계산기</title>
+  <title>낙원 계산기</title>
   <style>
     body {
       font-family: sans-serif;
@@ -10,57 +10,78 @@
       line-height: 1.6;
       max-width: 600px;
     }
+    h1 {
+      margin-bottom: 10px;
+    }
     .form-group {
       margin-bottom: 15px;
+      display: flex;
+      align-items: center;
     }
-    label {
-      display: inline-block;
+    .form-group label {
       width: 120px;
     }
-    input[type="number"] {
+    .form-group input {
       width: 150px;
       padding: 5px;
+      text-align: right; /* 숫자 오른쪽 정렬 */
+    }
+    .form-group span {
+      margin-left: 5px;
     }
     .result {
       margin-top: 20px;
       font-weight: bold;
       font-size: 1.2em;
     }
+    .hint {
+      color: #666;
+      margin-left: 10px;
+    }
   </style>
 </head>
 <body>
 
-  <h1>은퇴 후 자산 계산기</h1>
-  <p>아래 값을 입력하면, 은퇴 후 예상 자산이 즉시 계산됩니다.</p>
+  <h1>낙원 계산기</h1>
+  <p>아래 값을 입력하면, 은퇴(낙원) 후 예상 자산이 즉시 계산됩니다.</p>
 
   <!-- 보유 자산 -->
   <div class="form-group">
-    <label for="B36">보유 자산(원):</label>
-    <input type="number" id="B36" placeholder="예: 100000000" />
+    <label for="B36">보유 자산</label>
+    <input type="text" id="B36" placeholder="예: 100000000" />
+    <span>원</span>
+    <!-- (xx만원) 표기용 -->
+    <span id="B36_million" class="hint">(0만원)</span>
   </div>
 
   <!-- 연간 저축 금액 -->
   <div class="form-group">
-    <label for="B37">연간 저축 금액(원):</label>
-    <input type="number" id="B37" placeholder="예: 12000000" />
+    <label for="B37">연간 저축 금액</label>
+    <input type="text" id="B37" placeholder="예: 12000000" />
+    <span>원</span>
+    <!-- (xx만원) 표기용 -->
+    <span id="B37_million" class="hint">(0만원)</span>
   </div>
 
-  <!-- 투자·저축 기간(N년) -->
+  <!-- 기간 (N년) -->
   <div class="form-group">
-    <label for="B38">기간(N년):</label>
+    <label for="B38">기간</label>
     <input type="number" id="B38" placeholder="예: 25" />
+    <span>년</span>
   </div>
 
   <!-- 명목 수익률 -->
   <div class="form-group">
-    <label for="B39">명목 수익률(%):</label>
+    <label for="B39">명목 수익률</label>
     <input type="number" id="B39" placeholder="예: 5" step="0.1" />
+    <span>%</span>
   </div>
 
   <!-- 저축 증가율 -->
   <div class="form-group">
-    <label for="B40">저축 증가율(%):</label>
+    <label for="B40">저축 증가율</label>
     <input type="number" id="B40" placeholder="예: 3" step="0.1" />
+    <span>%</span>
   </div>
 
   <!-- 계산 결과 -->
@@ -70,24 +91,48 @@
 
   <!-- 계산 스크립트 -->
   <script>
-    // 실시간으로 입력받아 계산하기 위해, 모든 input에 'input' 이벤트를 걸어줍니다.
-    document.querySelectorAll('input').forEach(el => {
-      el.addEventListener('input', calculateRetirementAsset);
-    });
+    /************************************************************
+     * 1) 숫자 입력 필드에 콤마 추가 + (xx만원) 표기
+     ************************************************************/
+    function formatInputWithCommasAndConvertToManwon(id) {
+      const inputElement = document.getElementById(id);
+      // 기존 값에서 콤마 제거
+      let rawValueString = inputElement.value.replaceAll(",", "");
+      // 숫자로 변환 (NaN 방지)
+      let rawValue = parseFloat(rawValueString) || 0;
+      
+      // 3자리마다 콤마 추가
+      let formattedValue = rawValue.toLocaleString();
+      // 인풋에 다시 세팅
+      inputElement.value = formattedValue;
 
+      // (xx만원)으로 표기할 값 계산 (만 원 단위)
+      // 예: 10,000,000 -> 1,000만원
+      let manWonValue = Math.round(rawValue / 10000);
+      let spanElement = document.getElementById(id + "_million");
+      if (spanElement) {
+        spanElement.textContent = `(${manWonValue.toLocaleString()}만원)`;
+      }
+    }
+
+    /************************************************************
+     * 2) 낙원(은퇴) 후 자산 계산 (엑셀 공식 그대로 적용)
+     ************************************************************/
     function calculateRetirementAsset() {
-      // HTML의 각 입력값을 가져오기
-      const B36 = parseFloat(document.getElementById('B36').value) || 0;  // 보유 자산
-      const B37 = parseFloat(document.getElementById('B37').value) || 0;  // 연간 저축 금액
-      const B38 = parseInt(document.getElementById('B38').value) || 0;    // N년
+      // 각 입력값 가져오기 (보유 자산, 저축 금액은 콤마 제거 후 파싱)
+      const rawB36 = document.getElementById('B36').value.replaceAll(",", "") || "0";
+      const rawB37 = document.getElementById('B37').value.replaceAll(",", "") || "0";
+      const B36 = parseFloat(rawB36); // 보유 자산
+      const B37 = parseFloat(rawB37); // 연간 저축 금액
+      const B38 = parseInt(document.getElementById('B38').value) || 0;    // 기간(년)
       const B39 = parseFloat(document.getElementById('B39').value) || 0;  // 명목 수익률(%)
       const B40 = parseFloat(document.getElementById('B40').value) || 0;  // 저축 증가율(%)
 
-      // 퍼센트를 소수로 변환 (예: 5% -> 0.05)
+      // 퍼센트를 소수로 변환 (5% -> 0.05)
       const nominalRate = B39 / 100;
       const savingGrowthRate = B40 / 100;
 
-      // Excel에서 사용했던 공식
+      // Excel에서 쓰던 공식 (IF문)
       // = IF(
       //   B39 = B40,
       //   B36 * (1 + B39)^B38 + B37 * B38 * (1 + B39)^(B38 - 1),
@@ -97,16 +142,15 @@
       //     )
       // )
       let result = 0;
-
       if (nominalRate === savingGrowthRate) {
-        // B39 = B40 인 경우
-        result = B36 * Math.pow(1 + nominalRate, B38)
-               + B37 * B38 * Math.pow(1 + nominalRate, B38 - 1);
+        // B39 == B40
+        result = B36 * Math.pow((1 + nominalRate), B38)
+               + B37 * B38 * Math.pow((1 + nominalRate), (B38 - 1));
       } else {
-        // B39 != B40 인 경우
-        result = B36 * Math.pow(1 + nominalRate, B38)
+        // B39 != B40
+        result = B36 * Math.pow((1 + nominalRate), B38)
                + B37 * (
-                   ( Math.pow(1 + nominalRate, B38) - Math.pow(1 + savingGrowthRate, B38) )
+                   ( Math.pow((1 + nominalRate), B38) - Math.pow((1 + savingGrowthRate), B38) )
                    / (nominalRate - savingGrowthRate)
                  );
       }
@@ -114,6 +158,31 @@
       // 결과 표시 (3자리 단위로 콤마)
       document.getElementById('resultValue').textContent = Math.round(result).toLocaleString();
     }
+
+    /************************************************************
+     * 3) 이벤트 리스너 설정
+     *    - 보유 자산, 연간 저축 금액: 콤마+만원 표기 + 계산
+     *    - 나머지(기간, 수익률, 증가율): 단순 계산
+     ************************************************************/
+    // 보유 자산
+    const B36Input = document.getElementById('B36');
+    B36Input.addEventListener('input', () => {
+      formatInputWithCommasAndConvertToManwon('B36');
+      calculateRetirementAsset();
+    });
+
+    // 연간 저축 금액
+    const B37Input = document.getElementById('B37');
+    B37Input.addEventListener('input', () => {
+      formatInputWithCommasAndConvertToManwon('B37');
+      calculateRetirementAsset();
+    });
+
+    // 기간(N년), 명목 수익률, 저축 증가율
+    document.getElementById('B38').addEventListener('input', calculateRetirementAsset);
+    document.getElementById('B39').addEventListener('input', calculateRetirementAsset);
+    document.getElementById('B40').addEventListener('input', calculateRetirementAsset);
+
   </script>
 </body>
 </html>
