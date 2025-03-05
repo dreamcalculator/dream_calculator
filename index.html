@@ -56,15 +56,10 @@
 </head>
 <body>
 
-  <!-- 메인 제목 -->
-  <h1>낙원 계산기</h1>
-
   <!-- =========================
-       (A) 원하는 월 생활비 → 미래에 필요한 목돈
-       * "가장 밑에 있던 섹션"을 여기로 이동
-       * 이 섹션의 인출율(C27), 연수(C28), 인플레이션(C29)이
-         이후 섹션(B17, B19, B18)에 영향을 준다 (기준점).
+       (1) 원하는 월 생활비 → 미래에 필요한 목돈
       ========================= -->
+  <h1>낙원 계산기</h1>
   <p>
     현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
   </p>
@@ -78,7 +73,8 @@
   </div>
   <div class="form-group">
     <label for="C27">인출율</label>
-    <input type="number" id="C27" placeholder="예: 4" step="0.1" />
+    <!-- 예시를 3.5%로 수정 -->
+    <input type="number" id="C27" placeholder="예: 3.5" step="0.1" />
     <span>%</span>
   </div>
   <div class="form-group">
@@ -104,9 +100,14 @@
     <span id="C32Detail" class="detail">(0원)</span>
   </div>
 
+  <!-- 구분선 추가 -->
+  <div class="divider"></div>
+
   <!-- =========================
-       1) 낙원 계산기 (기존 내용)
+       (2) 낙원 계산기
+       * 제목을 다른 섹션과 동일한 h2 크기로 수정
       ========================= -->
+  <h2>낙원 계산기</h2>
   <p>
     현재 보유한 자산과, 
     <span style="color:red; font-weight:bold;">연간</span>으로 얼마를 투자하는지 적어주세요.  
@@ -132,6 +133,7 @@
   </div>
 
   <!-- 기간 (N년) -->
+  <!-- 여기서 예시를 그대로 두지만, C28 값이 자동 반영됨 -->
   <div class="form-group">
     <label for="B38">기간</label>
     <input type="number" id="B38" placeholder="예: 25" />
@@ -139,9 +141,10 @@
   </div>
 
   <!-- 명목 수익률 -->
+  <!-- 예시를 10%로 수정 -->
   <div class="form-group">
     <label for="B39">명목 수익률</label>
-    <input type="number" id="B39" placeholder="예: 5" step="0.1" />
+    <input type="number" id="B39" placeholder="예: 10" step="0.1" />
     <span>%</span>
   </div>
 
@@ -167,7 +170,7 @@
   <div class="divider"></div>
 
   <!-- =========================
-       2) 미래 목돈을 현재로 계산
+       (3) 미래 목돈을 현재로 계산
       ========================= -->
   <p>
     이 돈은 
@@ -186,6 +189,7 @@
   </div>
 
   <!-- 인플레이션 (B10) -->
+  <!-- C29 → B10 (자동 연동) -->
   <div class="form-group">
     <label for="B10">인플레이션</label>
     <input type="number" id="B10" placeholder="예: 3" step="0.1" />
@@ -193,6 +197,7 @@
   </div>
 
   <!-- 연수 (B11) -->
+  <!-- C28 → B11 (자동 연동) -->
   <div class="form-group">
     <label for="B11">연수</label>
     <input type="number" id="B11" placeholder="예: 25" />
@@ -210,7 +215,7 @@
   <div class="divider"></div>
 
   <!-- =========================
-       3) 미래 목돈 → 인출 가능한 돈
+       (4) 미래 목돈 → 인출 가능한 돈
       ========================= -->
   <p>
     그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
@@ -227,14 +232,15 @@
   </div>
 
   <!-- 인출율 (B17) -->
+  <!-- C27 → B17 (자동 연동) -->
   <div class="form-group">
     <label for="B17">인출율</label>
-    <!-- 기본값 3.5% -->
     <input type="number" id="B17" value="3.5" step="0.1" />
     <span>%</span>
   </div>
 
   <!-- 인플레이션 (B18) -->
+  <!-- C29 → B18 (자동 연동) -->
   <div class="form-group">
     <label for="B18">인플레이션</label>
     <input type="number" id="B18" placeholder="예: 3" step="0.1" />
@@ -242,6 +248,7 @@
   </div>
 
   <!-- 연수 (B19) -->
+  <!-- C28 → B19 (자동 연동) -->
   <div class="form-group">
     <label for="B19">연수</label>
     <input type="number" id="B19" placeholder="예: 25" />
@@ -267,11 +274,7 @@
     /************************************************************
      * (A) 사용자 수동 수정 여부 플래그
      ************************************************************/
-    let userModifiedInflation   = false; // 중간 계산기(B10, B11)
-    let userModifiedYears       = false;
-    let userModifiedFutureMoney = false; // 하단 B16
-    let userModifiedInflation2  = false; // 하단 B18
-    let userModifiedYears2      = false; // 하단 B19
+    let userModifiedFutureMoney = false; // B16 (미래 목돈) 수동 수정 여부
 
     /************************************************************
      * 공통 함수 1) 숫자 → 만/억/조/경/해 변환
@@ -323,7 +326,53 @@
     }
 
     /************************************************************
-     * (B) 낙원 계산기: 은퇴 후 자산
+     * (B) "원하는 월 생활비 → 미래에 필요한 목돈" 계산
+     ************************************************************/
+    function calculateNeededMoney() {
+      // C26: 원하는 월 생활비
+      let rawC26 = document.getElementById('C26').value.replaceAll(",", "") || "0";
+      let C26 = parseFloat(rawC26);
+
+      // C27: 인출율(%) => 3.5 => 3.5%
+      let C27 = parseFloat(document.getElementById('C27').value) || 0;
+
+      // C28: 연수
+      let C28 = parseInt(document.getElementById('C28').value) || 0;
+
+      // C29: 인플레이션(%) => 3 => 3%
+      let C29 = parseFloat(document.getElementById('C29').value) || 0;
+
+      let neededMoney = 0;
+      let presentValue = 0;
+
+      // 필요한 돈 (C31)
+      // = C26 * 12 * (1 + C29/100)^C28 / (C27/100)
+      if (C27 > 0) {
+        neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
+      }
+
+      // 현재 가치 (C32)
+      // = neededMoney / (1 + C29/100)^C28
+      if (neededMoney > 0) {
+        presentValue = neededMoney / Math.pow(1 + C29/100, C28);
+      }
+
+      // 반올림
+      const neededMoneyRounded = isNaN(neededMoney) ? 0 : Math.round(neededMoney);
+      const presentValueRounded = isNaN(presentValue) ? 0 : Math.round(presentValue);
+
+      // 표시
+      document.getElementById('C31').textContent = formatKoreanUnits(neededMoneyRounded);
+      document.getElementById('C31Detail').textContent =
+        "(" + neededMoneyRounded.toLocaleString() + "원)";
+
+      document.getElementById('C32').textContent = formatKoreanUnits(presentValueRounded);
+      document.getElementById('C32Detail').textContent =
+        "(" + presentValueRounded.toLocaleString() + "원)";
+    }
+
+    /************************************************************
+     * (C) "낙원 계산기" - 은퇴 후 자산
      ************************************************************/
     function calculateRetirementAsset() {
       const rawB36 = document.getElementById('B36').value.replaceAll(",", "") || "0";
@@ -356,7 +405,7 @@
       document.getElementById('resultValue').textContent = formatKoreanUnits(roundedResult);
       document.getElementById('resultValueDetail').textContent =
         "(" + roundedResult.toLocaleString() + "원)";
-
+      
       // "XX년 후" 문구
       document.getElementById('periodYears').textContent = B38.toString();
 
@@ -365,20 +414,13 @@
       B9Input.value = roundedResult.toLocaleString();
       formatInputAndDisplayUnit('B9');
 
-      // 중간 인플레이션/연수 자동 세팅 (단, 사용자가 직접 수정 전)
-      if (!userModifiedInflation) {
-        document.getElementById('B10').value = B40.toString();
-      }
-      if (!userModifiedYears) {
-        document.getElementById('B11').value = B38.toString();
-      }
-
-      calculatePresentValue();  // 중간 계산
-      syncWithdrawalInputs();   // 하단 인출 계산기 동기화
+      // 이후 계산
+      calculatePresentValue();
+      syncWithdrawalInputs();
     }
 
     /************************************************************
-     * (C) 복사하기 버튼
+     * (D) 복사하기 버튼
      ************************************************************/
     function copyResultToClipboard() {
       const detailText = document.getElementById('resultValueDetail').textContent;
@@ -389,7 +431,7 @@
     }
 
     /************************************************************
-     * (D) 미래 목돈 → 현재 가치 (중간 계산기)
+     * (E) 미래 목돈 → 현재 가치 (중간 계산기)
      ************************************************************/
     function calculatePresentValue() {
       const rawB9  = document.getElementById('B9').value.replaceAll(",", "") || "0";
@@ -406,7 +448,7 @@
     }
 
     /************************************************************
-     * (E) 미래 목돈 → 인출 가능한 돈
+     * (F) 미래 목돈 → 인출 가능한 돈
      ************************************************************/
     function calculateWithdrawal() {
       const rawB16 = document.getElementById('B16').value.replaceAll(",", "") || "0";
@@ -415,15 +457,12 @@
       const B18 = parseFloat(document.getElementById('B18').value) || 0;
       const B19 = parseInt(document.getElementById('B19').value) || 0;
 
-      // "그럼, 위의 돈으로 XX년 후 매달..." 부분에 표시
       document.getElementById('withdrawYears').textContent = B19.toString();
 
-      // 가능 월 소득
       let monthlyIncome = 0;
       if (B17 !== 0) {
         monthlyIncome = (B16 * (B17 / 100)) / 12;
       }
-      // 현재 가치
       const presentVal = monthlyIncome / Math.pow((1 + B18 / 100), B19) || 0;
 
       const roundedMonthly = Math.round(monthlyIncome);
@@ -439,121 +478,69 @@
     }
 
     /************************************************************
-     * (F) 중간 계산기 → 하단 인출 계산기 연동
+     * (G) 중간 계산기 → 하단 인출 계산기 연동
+       (단, 미래 목돈(B16)은 수동 변경 가능)
      ************************************************************/
     function syncWithdrawalInputs() {
-      // B9 → B16 (미래 목돈)
       if (!userModifiedFutureMoney) {
         const rawB9 = document.getElementById('B9').value.replaceAll(",", "") || "0";
         document.getElementById('B16').value = parseFloat(rawB9).toLocaleString();
         formatInputAndDisplayUnit('B16');
       }
-      // B10 → B18 (인플레이션)
-      if (!userModifiedInflation2) {
-        const B10 = parseFloat(document.getElementById('B10').value) || 0;
-        document.getElementById('B18').value = B10.toString();
-      }
-      // B11 → B19 (연수)
-      if (!userModifiedYears2) {
-        const B11 = parseInt(document.getElementById('B11').value) || 0;
-        document.getElementById('B19').value = B11.toString();
-      }
-
-      // 인출 계산
       calculateWithdrawal();
     }
 
     /************************************************************
-     * (G) "원하는 월 생활비 → 미래에 필요한 목돈" 계산
+     * (H) "원하는 월 생활비" 섹션 → 나머지 섹션 자동 연동
+     *     (C27 -> B17), (C28 -> B38,B11,B19), (C29 -> B40,B10,B18)
      ************************************************************/
-    function calculateNeededMoney() {
-      // C26: 원하는 월 생활비
-      let rawC26 = document.getElementById('C26').value.replaceAll(",", "") || "0";
-      let C26 = parseFloat(rawC26);
+    function syncFirstSectionToOthers() {
+      const c27Val = parseFloat(document.getElementById('C27').value) || 0; // 인출율
+      const c28Val = parseInt(document.getElementById('C28').value) || 0;   // 연수
+      const c29Val = parseFloat(document.getElementById('C29').value) || 0; // 인플레이션
 
-      // C27: 인출율(%) => 4 => 4%
-      let C27 = parseFloat(document.getElementById('C27').value) || 0;
+      // 인출율 → B17
+      document.getElementById('B17').value = c27Val.toString();
 
-      // C28: 연수
-      let C28 = parseInt(document.getElementById('C28').value) || 0;
+      // 연수 → B38 (낙원 계산기), B11 (미래 목돈 현재 가치), B19 (미래 목돈 → 인출)
+      document.getElementById('B38').value = c28Val.toString();
+      document.getElementById('B11').value = c28Val.toString();
+      document.getElementById('B19').value = c28Val.toString();
 
-      // C29: 인플레이션(%) => 3 => 3%
-      let C29 = parseFloat(document.getElementById('C29').value) || 0;
+      // 인플레이션 → B40(저축 증가율), B10(미래 목돈 현재가치), B18(미래 목돈→인출)
+      document.getElementById('B40').value = c29Val.toString();
+      document.getElementById('B10').value = c29Val.toString();
+      document.getElementById('B18').value = c29Val.toString();
 
-      let neededMoney = 0;
-      let presentValue = 0;
-
-      // 필요한 돈 (C31)
-      if (C27 > 0) {
-        neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
-      } else {
-        neededMoney = 0;
-      }
-
-      // 현재 가치 (C32)
-      if (neededMoney > 0) {
-        presentValue = neededMoney / Math.pow(1 + C29/100, C28);
-      } else {
-        presentValue = 0;
-      }
-
-      // 반올림
-      const neededMoneyRounded = isNaN(neededMoney) ? 0 : Math.round(neededMoney);
-      const presentValueRounded = isNaN(presentValue) ? 0 : Math.round(presentValue);
-
-      // 표시
-      document.getElementById('C31').textContent = formatKoreanUnits(neededMoneyRounded);
-      document.getElementById('C31Detail').textContent =
-        "(" + neededMoneyRounded.toLocaleString() + "원)";
-
-      document.getElementById('C32').textContent = formatKoreanUnits(presentValueRounded);
-      document.getElementById('C32Detail').textContent =
-        "(" + presentValueRounded.toLocaleString() + "원)";
-    }
-
-    /************************************************************
-     * (H) 새 섹션 → 기존 섹션(B17,B18,B19) 동기화
-     *     "이제는 C27,C28,C29가 기준" 이므로,
-     *      C27,C28,C29 변경 시 B17,B19,B18에 반영 후 재계산
-     ************************************************************/
-    function syncNeededMoneyToOthers() {
-      // 새 섹션의 값
-      const C27Val = parseFloat(document.getElementById('C27').value) || 0; // 인출율
-      const C28Val = parseInt(document.getElementById('C28').value) || 0;   // 연수
-      const C29Val = parseFloat(document.getElementById('C29').value) || 0; // 인플레이션
-
-      // 기존 섹션에 대입
-      document.getElementById('B17').value = C27Val.toString(); // 인출율
-      document.getElementById('B19').value = C28Val.toString(); // 연수
-      document.getElementById('B18').value = C29Val.toString(); // 인플레이션
-
-      // 다시 계산
-      calculateWithdrawal(); // "미래 목돈 → 인출 가능한 돈"
+      // 연동 후 각 계산 수행
+      calculateNeededMoney();
+      calculateRetirementAsset();
+      calculatePresentValue();
+      calculateWithdrawal();
     }
 
     /************************************************************
      * (I) 이벤트 리스너
      ************************************************************/
-    // (A-1) 새 섹션: 원하는 월 생활비
+    // 1) 원하는 월 생활비 → 미래에 필요한 목돈 (최상단 섹션)
     document.getElementById('C26').addEventListener('input', () => {
       formatInputAndDisplayUnit('C26');
       calculateNeededMoney();
     });
-    // (A-2) 새 섹션: 인출율, 연수, 인플레이션 => 계산 + 기존 섹션에 동기화
     document.getElementById('C27').addEventListener('input', () => {
       calculateNeededMoney();
-      syncNeededMoneyToOthers();
+      syncFirstSectionToOthers();
     });
     document.getElementById('C28').addEventListener('input', () => {
       calculateNeededMoney();
-      syncNeededMoneyToOthers();
+      syncFirstSectionToOthers();
     });
     document.getElementById('C29').addEventListener('input', () => {
       calculateNeededMoney();
-      syncNeededMoneyToOthers();
+      syncFirstSectionToOthers();
     });
 
-    // (B) 낙원 계산기
+    // 2) 낙원 계산기
     document.getElementById('B36').addEventListener('input', () => {
       formatInputAndDisplayUnit('B36');
       calculateRetirementAsset();
@@ -569,46 +556,34 @@
     // 복사하기 버튼
     document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
 
-    // (C) 중간 계산기(B9,B10,B11)
+    // 3) 미래 목돈 → 현재로 계산
     document.getElementById('B9').addEventListener('input', () => {
       formatInputAndDisplayUnit('B9');
       calculatePresentValue();
       syncWithdrawalInputs();
     });
     document.getElementById('B10').addEventListener('input', () => {
-      userModifiedInflation = true;
       calculatePresentValue();
       syncWithdrawalInputs();
     });
     document.getElementById('B11').addEventListener('input', () => {
-      userModifiedYears = true;
       calculatePresentValue();
       syncWithdrawalInputs();
     });
 
-    // (D) 미래 목돈 → 인출 가능한 돈(B16,B17,B18,B19)
+    // 4) 미래 목돈 → 인출 가능한 돈
     document.getElementById('B16').addEventListener('input', () => {
       userModifiedFutureMoney = true;
       formatInputAndDisplayUnit('B16');
       calculateWithdrawal();
     });
-    // 아래 3개는 사용자가 직접 B17,B18,B19를 바꿔도 계산은 가능
     document.getElementById('B17').addEventListener('input', calculateWithdrawal);
-    document.getElementById('B18').addEventListener('input', () => {
-      userModifiedInflation2 = true;
-      calculateWithdrawal();
-    });
-    document.getElementById('B19').addEventListener('input', () => {
-      userModifiedYears2 = true;
-      calculateWithdrawal();
-    });
+    document.getElementById('B18').addEventListener('input', calculateWithdrawal);
+    document.getElementById('B19').addEventListener('input', calculateWithdrawal);
 
-    // 페이지 로드 시 초기 계산
-    calculateNeededMoney();     // 새 섹션 먼저
-    syncNeededMoneyToOthers();  // 그 값으로 기존(B17,B18,B19) 세팅
-    calculateRetirementAsset(); // 상단 → 중간 → 하단 연동
-    calculatePresentValue();
-    calculateWithdrawal();
+    // 초기 실행
+    calculateNeededMoney();
+    syncFirstSectionToOthers(); // 첫 섹션 값 → 나머지 반영
   </script>
 </body>
 </html>
