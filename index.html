@@ -103,9 +103,7 @@
   <div style="height:10px;"></div>
 
   <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
-  <p id="tipsText" style="line-height:1.5; margin:0;">
-    <!-- 아래 JS에서 연수(C28)값이 동적으로 반영되며, 4%와 3.5%는 빨간색, 나머지는 검정색 -->
-  </p>
+  <p id="tipsText" style="line-height:1.5; margin:0;"></p>
 
   <!-- 구분선 -->
   <div class="divider"></div>
@@ -347,12 +345,12 @@
       let neededMoney = 0;
       let presentValue = 0;
 
-      // 필요한 돈 (C31) = C26*12*(1 + C29/100)^C28 / (C27/100)
+      // 필요한 돈 (C31)
       if (C27 > 0) {
         neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
       }
 
-      // 현재 가치 (C32) = neededMoney / (1 + C29/100)^C28
+      // 현재 가치 (C32)
       if (neededMoney > 0) {
         presentValue = neededMoney / Math.pow(1 + C29/100, C28);
       }
@@ -534,16 +532,17 @@
     }
 
     /************************************************************
-     * (I) DreamMoney vs 은퇴 후 자산 비교
+     * (I) DreamMoney vs 은퇴 후 자산 비교 (괄호 안 실제 액수)
      ************************************************************/
     function compareDreamAndRetirement() {
-      // DreamMoney (C31)
-      let c31Text = document.getElementById('C31').textContent.replace(/[^0-9]/g, "") || "0";
-      let dreamMoney = parseInt(c31Text) || 0;
+      // **수정**: C31Detail → 괄호 안 텍스트
+      let c31Detail = document.getElementById('C31Detail').textContent || "";
+      // 숫자만 추출
+      let dreamMoney = parseInt(c31Detail.replace(/[^0-9]/g, "")) || 0;
 
-      // 은퇴 후 자산 (resultValueDetail)
-      let retText = document.getElementById('resultValueDetail').textContent.replace(/[^0-9]/g, "") || "0";
-      let retirementAsset = parseInt(retText) || 0;
+      // 은퇴 후 자산 (resultValueDetail) → 괄호 안 텍스트
+      let retDetail = document.getElementById('resultValueDetail').textContent || "";
+      let retirementAsset = parseInt(retDetail.replace(/[^0-9]/g, "")) || 0;
 
       const container = document.getElementById('retirementAssetContainer');
       const msgDiv = document.getElementById('retirementAssetMsg');
@@ -599,7 +598,7 @@
       formatInputAndDisplayUnit('C26');
       calculateNeededMoney();
       updateTipsText();
-      compareDreamAndRetirement(); // 혹시모름
+      compareDreamAndRetirement();
     });
     document.getElementById('C27').addEventListener('input', () => {
       calculateNeededMoney();
