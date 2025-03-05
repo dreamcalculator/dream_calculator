@@ -535,12 +535,11 @@
      * (I) DreamMoney vs 은퇴 후 자산 비교 (괄호 안 실제 액수)
      ************************************************************/
     function compareDreamAndRetirement() {
-      // **수정**: C31Detail → 괄호 안 텍스트
+      // C31Detail → 괄호 안 텍스트
       let c31Detail = document.getElementById('C31Detail').textContent || "";
-      // 숫자만 추출
       let dreamMoney = parseInt(c31Detail.replace(/[^0-9]/g, "")) || 0;
 
-      // 은퇴 후 자산 (resultValueDetail) → 괄호 안 텍스트
+      // resultValueDetail → 괄호 안 텍스트
       let retDetail = document.getElementById('resultValueDetail').textContent || "";
       let retirementAsset = parseInt(retDetail.replace(/[^0-9]/g, "")) || 0;
 
@@ -560,6 +559,9 @@
       // dreamMoney 기준으로 몇 %
       let ratio = diff / dreamMoney;
 
+      // 만/억/조/경 변환
+      const diffReadable = formatKoreanUnits(absDiff);
+
       // 배경 & 메시지
       let bgColor = "transparent";
       let msg = "";
@@ -573,7 +575,7 @@
         } else {
           bgColor = "#ffffcc"; // 연한 노랑
         }
-        msg = absDiff.toLocaleString() + "원이 부족합니다";
+        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 부족합니다`;
       } else {
         // 충분한 경우 (diff >= 0)
         // ratio >= 0.2 => 20% 이상 여유 => 초록
@@ -583,7 +585,7 @@
         } else {
           bgColor = "#ffffcc"; // 연한 노랑
         }
-        msg = absDiff.toLocaleString() + "원이 남습니다";
+        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 남습니다`;
       }
 
       container.style.backgroundColor = bgColor;
