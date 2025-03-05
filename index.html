@@ -575,7 +575,7 @@
         } else {
           bgColor = "#ffffcc"; // 연한 노랑
         }
-        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 부족합니다`;
+        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 <span style="color:red;">부족합니다</span>`;
       } else {
         // 충분한 경우 (diff >= 0)
         // ratio >= 0.2 => 20% 이상 여유 => 초록
@@ -585,11 +585,12 @@
         } else {
           bgColor = "#ffffcc"; // 연한 노랑
         }
-        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 남습니다`;
+        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 <span style="color:green;">남습니다</span>`;
       }
 
       container.style.backgroundColor = bgColor;
-      msgDiv.innerText = msg;
+      // msg에 HTML 태그가 포함되므로 innerHTML 사용
+      msgDiv.innerHTML = msg;
     }
 
     /************************************************************
