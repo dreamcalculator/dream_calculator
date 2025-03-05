@@ -216,8 +216,46 @@
   <!-- 구분선 -->
   <div class="divider"></div>
 
-  <!-- 생존 계산기 부분 삭제됨 -->
+  <!-- =========================
+       4) "인출하고 싶은 액수 → x년 후 필요한 목돈"
+      ========================= -->
+  <h2>인출하고 싶은 액수 → x년 후 필요한 목돈</h2>
 
+  <div class="form-group">
+    <label for="C26">원하는 월 생활비</label>
+    <input type="text" id="C26" placeholder="예: 4,500,000" />
+    <span>원</span>
+    <span id="C26_million" class="hint">(0원)</span>
+  </div>
+  <div class="form-group">
+    <label for="C27">인출율</label>
+    <input type="number" id="C27" placeholder="예: 4" step="0.1" />
+    <span>%</span>
+  </div>
+  <div class="form-group">
+    <label for="C28">연수</label>
+    <input type="number" id="C28" placeholder="예: 20" />
+    <span>년</span>
+  </div>
+  <div class="form-group">
+    <label for="C29">인플레이션</label>
+    <input type="number" id="C29" placeholder="예: 3" step="0.1" />
+    <span>%</span>
+  </div>
+
+  <!-- 결과 -->
+  <div class="result">
+    필요한 돈: 
+    <span id="C31">0원</span>
+    <span id="C31Detail" class="detail">(0원)</span>
+  </div>
+  <div class="result">
+    현재 가치: 
+    <span id="C32">0원</span>
+    <span id="C32Detail" class="detail">(0원)</span>
+  </div>
+
+  <!-- JS -->
   <script>
     /************************************************************
      * (A) 사용자 수동 수정 여부 플래그
@@ -294,9 +332,11 @@
 
       let result = 0;
       if (nominalRate === savingGrowthRate) {
+        // (수익률 == 저축증가율)인 특수 케이스
         result = B36 * Math.pow(1 + nominalRate, B38)
                + B37 * B38 * Math.pow(1 + nominalRate, B38 - 1);
       } else {
+        // 일반 케이스
         result = B36 * Math.pow(1 + nominalRate, B38)
                + B37 * (
                    ( Math.pow(1 + nominalRate, B38) - Math.pow(1 + savingGrowthRate, B38) )
@@ -390,8 +430,7 @@
     }
 
     /************************************************************
-     * (G) 자동 동기화 로직
-     *     중간 계산기(B9,B10,B11) → 하단(B16,B18,B19)
+     * (F) 중간 계산기 → 하단 인출 계산기 연동
      ************************************************************/
     function syncWithdrawalInputs() {
       // B9 → B16 (미래 목돈)
@@ -413,6 +452,44 @@
 
       // 인출 계산
       calculateWithdrawal();
+    }
+
+    /************************************************************
+     * (G) [추가] "인출하고 싶은 액수 → x년 후 필요한 목돈" 계산
+     ************************************************************/
+    function calculateNeededMoney() {
+      // C26: 원하는 월 생활비
+      let rawC26 = document.getElementById('C26').value.replaceAll(",", "") || "0";
+      let C26 = parseFloat(rawC26);
+
+      // C27: 인출율(%) => 4 => 4%
+      let C27 = parseFloat(document.getElementById('C27').value) || 0;
+
+      // C28: 연수
+      let C28 = parseInt(document.getElementById('C28').value) || 0;
+
+      // C29: 인플레이션(%) => 3 => 3%
+      let C29 = parseFloat(document.getElementById('C29').value) || 0;
+
+      // 필요한 돈 (C31)
+      // = C26 * 12 * (1 + C29/100)^C28 / (C27/100)
+      const neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
+
+      // 현재 가치 (C32)
+      // = C31 / (1 + C29/100)^C28
+      const presentValue = neededMoney / Math.pow(1 + C29/100, C28);
+
+      const neededMoneyRounded = Math.round(neededMoney);
+      const presentValueRounded = Math.round(presentValue);
+
+      // 표시
+      document.getElementById('C31').textContent = formatKoreanUnits(neededMoneyRounded);
+      document.getElementById('C31Detail').textContent =
+        "(" + neededMoneyRounded.toLocaleString() + "원)";
+
+      document.getElementById('C32').textContent = formatKoreanUnits(presentValueRounded);
+      document.getElementById('C32Detail').textContent =
+        "(" + presentValueRounded.toLocaleString() + "원)";
     }
 
     /************************************************************
@@ -467,10 +544,22 @@
       calculateWithdrawal();
     });
 
+    // [추가] "인출하고 싶은 액수 → x년 후 필요한 목돈" 계산기
+    document.getElementById('C26').addEventListener('input', () => {
+      formatInputAndDisplayUnit('C26');
+      calculateNeededMoney();
+    });
+    document.getElementById('C27').addEventListener('input', calculateNeededMoney);
+    document.getElementById('C28').addEventListener('input', calculateNeededMoney);
+    document.getElementById('C29').addEventListener('input', calculateNeededMoney);
+
     // 초기 계산 실행
     calculateRetirementAsset(); // 상단 → 중간 → 하단 연동
     calculatePresentValue();
     calculateWithdrawal();
+
+    // 새로 추가된 계산기도 초기에 한번 실행
+    calculateNeededMoney();
   </script>
 </body>
 </html>
