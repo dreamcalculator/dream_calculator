@@ -99,8 +99,13 @@
     <span id="C32Detail" class="detail">(0원)</span>
   </div>
 
-  <!-- 추가된 안내문 -->
-  <p id="tipsText" style="margin-top:10px; color:#d00; line-height:1.5;"></p>
+  <!-- 한 줄 간격 -->
+  <div style="height:10px;"></div>
+
+  <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
+  <p id="tipsText" style="line-height:1.5; margin:0;">
+    <!-- 아래 JS에서 연수(C28)값이 동적으로 반영되며, 4%와 3.5%는 빨간색, 나머지는 검정색 -->
+  </p>
 
   <!-- 구분선 -->
   <div class="divider"></div>
@@ -158,12 +163,15 @@
   </p>
 
   <!-- 은퇴 후 자산 결과 + 복사 버튼 -->
-  <div class="result">
+  <!-- 아래에 배경색 변경을 위해 감싸는 div 추가 -->
+  <div id="retirementAssetContainer" class="result" style="transition: background-color 0.4s;">
     은퇴 후 자산: 
     <span id="resultValue">0원</span>
     <span id="resultValueDetail" class="detail">(0원)</span>
     <button id="copyResultBtn">결과 복사하기</button>
   </div>
+  <!-- 추가 문구 표시 영역 (부족/남음) -->
+  <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
 
   <!-- 구분선 -->
   <div class="divider"></div>
@@ -327,24 +335,24 @@
       let rawC26 = document.getElementById('C26').value.replaceAll(",", "") || "0";
       let C26 = parseFloat(rawC26);
 
-      // C27: 인출율(%) => 3.5 => 3.5%
+      // C27: 인출율(%)
       let C27 = parseFloat(document.getElementById('C27').value) || 0;
 
       // C28: 연수
       let C28 = parseInt(document.getElementById('C28').value) || 0;
 
-      // C29: 인플레이션(%) => 3 => 3%
+      // C29: 인플레이션(%)
       let C29 = parseFloat(document.getElementById('C29').value) || 0;
 
       let neededMoney = 0;
       let presentValue = 0;
 
-      // 필요한 돈 (C31)
+      // 필요한 돈 (C31) = C26*12*(1 + C29/100)^C28 / (C27/100)
       if (C27 > 0) {
         neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
       }
 
-      // 현재 가치 (C32)
+      // 현재 가치 (C32) = neededMoney / (1 + C29/100)^C28
       if (neededMoney > 0) {
         presentValue = neededMoney / Math.pow(1 + C29/100, C28);
       }
@@ -364,13 +372,17 @@
     }
 
     /************************************************************
-     * (B-1) 동적 안내문: C28값 반영
+     * (B-1) 동적 안내문: C28값 반영 + "4%"와 "3.5%"만 빨간색
      ************************************************************/
     function updateTipsText() {
       const c28Val = parseInt(document.getElementById('C28').value) || 0;
-      document.getElementById('tipsText').innerText = 
-        `인출율 정하는 팁 : ${c28Val}년 뒤에도 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 인출율 4%도 괜찮습니다.\n\n` +
-        `하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율을 3.5%로 설정하는 것을 추천합니다.`;
+
+      // "4%"와 "3.5%"만 빨간색, 나머지는 검정색
+      const tipHtml = 
+        `인출율 정하는 팁 : ${c28Val}년 뒤에도 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 인출율 <span style="color:red;">4%</span>도 괜찮습니다.<br><br>` +
+        `하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 <span style="color:red;">3.5%</span>로 설정하는 것을 추천합니다.`;
+
+      document.getElementById('tipsText').innerHTML = tipHtml;
     }
 
     /************************************************************
@@ -390,11 +402,9 @@
 
       let result = 0;
       if (nominalRate === savingGrowthRate) {
-        // (수익률 == 저축증가율)인 특수 케이스
         result = B36 * Math.pow(1 + nominalRate, B38)
                + B37 * B38 * Math.pow(1 + nominalRate, B38 - 1);
       } else {
-        // 일반 케이스
         result = B36 * Math.pow(1 + nominalRate, B38)
                + B37 * (
                    ( Math.pow(1 + nominalRate, B38) - Math.pow(1 + savingGrowthRate, B38) )
@@ -419,6 +429,9 @@
       // 이후 계산
       calculatePresentValue();
       syncWithdrawalInputs();
+
+      // (추가) DreamMoney vs 은퇴 후 자산 비교
+      compareDreamAndRetirement();
     }
 
     /************************************************************
@@ -514,20 +527,79 @@
       document.getElementById('B18').value = c29Val.toString();
 
       calculateNeededMoney();
-      updateTipsText();          // 추가: 팁 문구도 연수 변경 시 갱신
+      updateTipsText();         
       calculateRetirementAsset();
       calculatePresentValue();
       calculateWithdrawal();
     }
 
     /************************************************************
-     * (I) 이벤트 리스너
+     * (I) DreamMoney vs 은퇴 후 자산 비교
+     ************************************************************/
+    function compareDreamAndRetirement() {
+      // DreamMoney (C31)
+      let c31Text = document.getElementById('C31').textContent.replace(/[^0-9]/g, "") || "0";
+      let dreamMoney = parseInt(c31Text) || 0;
+
+      // 은퇴 후 자산 (resultValueDetail)
+      let retText = document.getElementById('resultValueDetail').textContent.replace(/[^0-9]/g, "") || "0";
+      let retirementAsset = parseInt(retText) || 0;
+
+      const container = document.getElementById('retirementAssetContainer');
+      const msgDiv = document.getElementById('retirementAssetMsg');
+
+      // 기본값이면 초기상태이므로, 배경 & 메시지 모두 리셋
+      if (dreamMoney === 0 || retirementAsset === 0) {
+        container.style.backgroundColor = "transparent";
+        msgDiv.innerText = "";
+        return;
+      }
+
+      // 차이
+      let diff = retirementAsset - dreamMoney;
+      let absDiff = Math.abs(diff);
+      // dreamMoney 기준으로 몇 %
+      let ratio = diff / dreamMoney;
+
+      // 배경 & 메시지
+      let bgColor = "transparent";
+      let msg = "";
+
+      if (diff < 0) {
+        // 부족한 경우
+        // ratio <= -0.2 => 20% 이상 부족 => 빨강
+        // ratio > -0.2 => 20% 미만 부족 => 노랑
+        if (ratio <= -0.2) {
+          bgColor = "#ffcccc"; // 연한 빨강
+        } else {
+          bgColor = "#ffffcc"; // 연한 노랑
+        }
+        msg = absDiff.toLocaleString() + "원이 부족합니다";
+      } else {
+        // 충분한 경우 (diff >= 0)
+        // ratio >= 0.2 => 20% 이상 여유 => 초록
+        // ratio < 0.2 => 20% 미만 여유 => 노랑
+        if (ratio >= 0.2) {
+          bgColor = "#ccffcc"; // 연한 초록
+        } else {
+          bgColor = "#ffffcc"; // 연한 노랑
+        }
+        msg = absDiff.toLocaleString() + "원이 남습니다";
+      }
+
+      container.style.backgroundColor = bgColor;
+      msgDiv.innerText = msg;
+    }
+
+    /************************************************************
+     * (J) 이벤트 리스너
      ************************************************************/
     // 1) 원하는 월 생활비
     document.getElementById('C26').addEventListener('input', () => {
       formatInputAndDisplayUnit('C26');
       calculateNeededMoney();
-      updateTipsText(); // 혹시 사용자가 이때도 연수를 바꿀 수 있으니 같이 호출
+      updateTipsText();
+      compareDreamAndRetirement(); // 혹시모름
     });
     document.getElementById('C27').addEventListener('input', () => {
       calculateNeededMoney();
@@ -558,7 +630,7 @@
     // 복사하기 버튼
     document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
 
-    // 3) 미래 목돈 → 현재 가치
+    // 3) 미래 목돈 → 현재로 계산
     document.getElementById('B9').addEventListener('input', () => {
       formatInputAndDisplayUnit('B9');
       calculatePresentValue();
