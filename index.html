@@ -59,7 +59,7 @@
   <!-- =========================
        (1) 원하는 월 생활비 → 미래에 필요한 목돈
       ========================= -->
-  <h1>꿈 계산기</h1> <!-- 기존: 낙원 계산기 → 꿈 계산기 -->
+  <h1>꿈 계산기</h1>
   <p>
     현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
   </p>
@@ -466,7 +466,8 @@
     }
 
     /* (I) DreamMoney vs 은퇴 후 자산 비교 (괄호 안 실제 액수)
-       * 수정: "가 부족합니다" → "이 부족합니다"
+       * 부족: "이 부족합니다"
+       * 충분: "이 남습니다"
     */
     function compareDreamAndRetirement() {
       let c31Detail = document.getElementById('C31Detail').textContent || "";
@@ -499,7 +500,7 @@
         } else {
           bgColor = "#ffffcc";
         }
-        // "가 부족합니다" → "이 부족합니다"
+        // "이 부족합니다"
         msg = `${diffReadable}(${absDiff.toLocaleString()}원)이 <span style="color:red;">부족합니다</span>`;
       } else {
         if (ratio >= 0.2) {
@@ -507,7 +508,8 @@
         } else {
           bgColor = "#ffffcc";
         }
-        msg = `${diffReadable}(${absDiff.toLocaleString()}원)가 <span style="color:green;">남습니다</span>`;
+        // "이 남습니다"
+        msg = `${diffReadable}(${absDiff.toLocaleString()}원)이 <span style="color:green;">남습니다</span>`;
       }
 
       container.style.backgroundColor = bgColor;
