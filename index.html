@@ -11,6 +11,16 @@
       margin: 20px auto; 
       line-height: 1.6;
       max-width: 600px;  /* 본문 폭 600px 고정, 중앙 배치 */
+
+      /* 모바일에서 좌우 여백 확보 */
+      padding: 0 20px;
+      box-sizing: border-box;
+    }
+    /* 화면 폭이 600px 이하일 때 추가 여백 */
+    @media (max-width: 600px) {
+      body {
+        padding: 0 30px;
+      }
     }
     /* h1을 3배 크기로 + 중앙 정렬 */
     h1 {
@@ -176,7 +186,6 @@
   </div>
   <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -215,7 +224,6 @@
     <span id="presentValueDetail" class="detail">(0원)</span>
   </div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -263,11 +271,10 @@
     <span id="withdrawPresentValueDetail" class="detail">(0원)</span>
   </div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
-       (5) [추가] 현재 가치를 미래 가치로 환산
+       (5) 현재 가치를 미래 가치로 환산
       ========================= -->
   <h2>현재 가치를 미래 가치로 환산</h2>
   <p style="margin-bottom:10px;">
@@ -333,7 +340,7 @@
 
     function formatInputAndDisplayUnit(id) {
       const inputElement = document.getElementById(id);
-      let rawValueString = inputElement.value.replaceAll(",", "");
+      let rawValueString = inputElement.value.replace(/,/g, "");
       let rawValue = parseFloat(rawValueString) || 0;
       let formattedValue = rawValue.toLocaleString();
       inputElement.value = formattedValue;
@@ -344,7 +351,7 @@
     }
 
     function calculateNeededMoney() {
-      let rawC26 = document.getElementById('C26').value.replaceAll(",", "") || "0";
+      let rawC26 = document.getElementById('C26').value.replace(/,/g, "") || "0";
       let C26 = parseFloat(rawC26);
       let C27 = parseFloat(document.getElementById('C27').value) || 0;
       let C28 = parseInt(document.getElementById('C28').value) || 0;
@@ -380,8 +387,8 @@
     }
 
     function calculateRetirementAsset() {
-      const rawB36 = document.getElementById('B36').value.replaceAll(",", "") || "0";
-      const rawB37 = document.getElementById('B37').value.replaceAll(",", "") || "0";
+      const rawB36 = document.getElementById('B36').value.replace(/,/g, "") || "0";
+      const rawB37 = document.getElementById('B37').value.replace(/,/g, "") || "0";
       const B36 = parseFloat(rawB36);
       const B37 = parseFloat(rawB37);
       const B38 = parseInt(document.getElementById('B38').value) || 0;    
@@ -428,7 +435,7 @@
     }
 
     function calculatePresentValue() {
-      const rawB9  = document.getElementById('B9').value.replaceAll(",", "") || "0";
+      const rawB9  = document.getElementById('B9').value.replace(/,/g, "") || "0";
       const B9  = parseFloat(rawB9);
       const B10 = parseFloat(document.getElementById('B10').value) || 0; 
       const B11 = parseInt(document.getElementById('B11').value) || 0;
@@ -442,7 +449,7 @@
     }
 
     function calculateWithdrawal() {
-      const rawB16 = document.getElementById('B16').value.replaceAll(",", "") || "0";
+      const rawB16 = document.getElementById('B16').value.replace(/,/g, "") || "0";
       const B16 = parseFloat(rawB16);
       const B17 = parseFloat(document.getElementById('B17').value) || 0;
       const B18 = parseFloat(document.getElementById('B18').value) || 0;
@@ -470,7 +477,7 @@
 
     function syncWithdrawalInputs() {
       if (!userModifiedFutureMoney) {
-        const rawB9 = document.getElementById('B9').value.replaceAll(",", "") || "0";
+        const rawB9 = document.getElementById('B9').value.replace(/,/g, "") || "0";
         document.getElementById('B16').value = parseFloat(rawB9).toLocaleString();
         formatInputAndDisplayUnit('B16');
       }
@@ -604,7 +611,7 @@
     let userModifiedFV_B4 = false;
 
     function calculateFutureValue() {
-      const rawB2 = document.getElementById('FV_B2').value.replaceAll(",", "") || "0";
+      const rawB2 = document.getElementById('FV_B2').value.replace(/,/g, "") || "0";
       const B2 = parseFloat(rawB2);
 
       const B3 = parseFloat(document.getElementById('FV_B3').value) || 0;
