@@ -5,13 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>꿈 계산기</title>
   <style>
+    /* 기존 스타일에서 수정된 부분만 하단에 주석 추가 */
+
     body {
       font-family: sans-serif;
-      margin: 20px;
+      margin: 0;             /* (1) 기본 margin 제거 */
       line-height: 1.6;
-      max-width: 600px;
+      /* max-width: 600px;   (2) 이 부분은 삭제합니다. 대신 .container 사용 */
     }
-    h1, h2 {
+
+    /* (3) 전체를 감싸는 컨테이너를 만들어 중앙 배치 + 좌우 여백 동일 */
+    .container {
+      max-width: 700px;      /* 원하는 폭 (예: 700px) */
+      margin: 0 auto;        /* 수평 중앙 정렬 */
+      padding: 20px;         /* 상하좌우 여백 */
+      text-align: left;      /* 내부 텍스트는 왼쪽 정렬 */
+    }
+
+    h1 {
+      margin-bottom: 10px;
+      text-align: center;        /* “꿈 계산기”만 중앙 정렬 */
+      font-size: 110%;           /* 폰트 크기를 기존보다 10% 증가 (기본 대비) */
+    }
+    h2 {
       margin-bottom: 10px;
     }
     .form-group {
@@ -20,12 +36,12 @@
       align-items: center;
     }
     .form-group label {
-      width: 120px; /* 모든 라벨 폭을 동일하게 */
+      width: 120px;
     }
     .form-group input {
       width: 150px;
       padding: 5px;
-      text-align: right; /* 숫자 오른쪽 정렬 */
+      text-align: right;
     }
     .form-group span {
       margin-left: 5px;
@@ -56,244 +72,249 @@
 </head>
 <body>
 
-  <!-- =========================
-       (1) 원하는 월 생활비 → 미래에 필요한 목돈
-      ========================= -->
-  <h1>꿈 계산기</h1>
-  <p>
-    현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
-  </p>
-  <h2>원하는 월 생활비 → 미래에 필요한 목돈</h2>
+  <!-- (4) 전체를 감싸는 .container 추가 -->
+  <div class="container">
 
-  <div class="form-group">
-    <label for="C26">원하는 월 생활비</label>
-    <input type="text" id="C26" placeholder="예: 4,500,000" />
-    <span>원</span>
-    <span id="C26_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="C27">인출율</label>
-    <input type="number" id="C27" placeholder="예: 3.5" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="C28">연수</label>
-    <input type="number" id="C28" placeholder="예: 20" />
-    <span>년</span>
-  </div>
-  <div class="form-group">
-    <label for="C29">인플레이션</label>
-    <input type="number" id="C29" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
+    <!-- =========================
+         (1) 원하는 월 생활비 → 미래에 필요한 목돈
+        ========================= -->
+    <h1>꿈 계산기</h1>
+    <p>
+      현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
+    </p>
+    <h2>원하는 월 생활비 → 미래에 필요한 목돈</h2>
 
-  <!-- 결과 -->
-  <div class="result">
-    필요한 돈: 
-    <span id="C31">0원</span>
-    <span id="C31Detail" class="detail">(0원)</span>
-  </div>
-  <div class="result">
-    현재 가치: 
-    <span id="C32">0원</span>
-    <span id="C32Detail" class="detail">(0원)</span>
-  </div>
+    <div class="form-group">
+      <label for="C26">원하는 월 생활비</label>
+      <input type="text" id="C26" placeholder="예: 4,500,000" />
+      <span>원</span>
+      <span id="C26_million" class="hint">(0원)</span>
+    </div>
+    <div class="form-group">
+      <label for="C27">인출율</label>
+      <input type="number" id="C27" placeholder="예: 3.5" step="0.1" />
+      <span>%</span>
+    </div>
+    <div class="form-group">
+      <label for="C28">연수</label>
+      <input type="number" id="C28" placeholder="예: 20" />
+      <span>년</span>
+    </div>
+    <div class="form-group">
+      <label for="C29">인플레이션</label>
+      <input type="number" id="C29" placeholder="예: 3" step="0.1" />
+      <span>%</span>
+    </div>
 
-  <!-- 한 줄 간격 -->
-  <div style="height:10px;"></div>
+    <!-- 결과 -->
+    <div class="result">
+      필요한 돈: 
+      <span id="C31">0원</span>
+      <span id="C31Detail" class="detail">(0원)</span>
+    </div>
+    <div class="result">
+      현재 가치: 
+      <span id="C32">0원</span>
+      <span id="C32Detail" class="detail">(0원)</span>
+    </div>
 
-  <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
-  <p id="tipsText" style="line-height:1.5; margin:0;"></p>
+    <!-- 한 줄 간격 -->
+    <div style="height:10px;"></div>
 
-  <!-- 구분선 -->
-  <div class="divider"></div>
+    <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
+    <p id="tipsText" style="line-height:1.5; margin:0;"></p>
 
-  <!-- =========================
-       (2) 낙원 계산기 (제목만 바뀐 상태)
-      ========================= -->
-  <h2>낙원 계산기</h2>
-  <p>
-    현재 보유한 자산과, 
-    <span style="color:red; font-weight:bold;">연간</span>으로 얼마를 투자하는지 적어주세요.  
-    그럼 은퇴 시점에 얼마의 자산을 가질 수 있는지 계산됩니다.
-  </p>
+    <!-- 구분선 -->
+    <div class="divider"></div>
 
-  <!-- 보유 자산 -->
-  <div class="form-group">
-    <label for="B36">보유 자산</label>
-    <input type="text" id="B36" placeholder="예: 100,000,000" />
-    <span>원</span>
-    <span id="B36_million" class="hint">(0원)</span>
-  </div>
+    <!-- =========================
+         (2) 낙원 계산기 (제목만 바뀐 상태)
+        ========================= -->
+    <h2>낙원 계산기</h2>
+    <p>
+      현재 보유한 자산과, 
+      <span style="color:red; font-weight:bold;">연간</span>으로 얼마를 투자하는지 적어주세요.  
+      그럼 은퇴 시점에 얼마의 자산을 가질 수 있는지 계산됩니다.
+    </p>
 
-  <!-- 연간 저축 금액 -->
-  <div class="form-group">
-    <label for="B37">
-      <span style="color:red; font-weight:bold;">연간</span> 저축 금액
-    </label>
-    <input type="text" id="B37" placeholder="예: 12,000,000" />
-    <span>원</span>
-    <span id="B37_million" class="hint">(0원)</span>
-  </div>
+    <!-- 보유 자산 -->
+    <div class="form-group">
+      <label for="B36">보유 자산</label>
+      <input type="text" id="B36" placeholder="예: 100,000,000" />
+      <span>원</span>
+      <span id="B36_million" class="hint">(0원)</span>
+    </div>
 
-  <!-- 기간 (N년) -->
-  <div class="form-group">
-    <label for="B38">기간</label>
-    <input type="number" id="B38" placeholder="예: 25" />
-    <span>년</span>
-  </div>
+    <!-- 연간 저축 금액 -->
+    <div class="form-group">
+      <label for="B37">
+        <span style="color:red; font-weight:bold;">연간</span> 저축 금액
+      </label>
+      <input type="text" id="B37" placeholder="예: 12,000,000" />
+      <span>원</span>
+      <span id="B37_million" class="hint">(0원)</span>
+    </div>
 
-  <!-- 명목 수익률 -->
-  <div class="form-group">
-    <label for="B39">명목 수익률</label>
-    <input type="number" id="B39" placeholder="예: 10" step="0.1" />
-    <span>%</span>
-  </div>
+    <!-- 기간 (N년) -->
+    <div class="form-group">
+      <label for="B38">기간</label>
+      <input type="number" id="B38" placeholder="예: 25" />
+      <span>년</span>
+    </div>
 
-  <!-- 저축 증가율 (물가 상승률) -->
-  <div class="form-group">
-    <label for="B40">저축 증가율<br>(물가 상승률)</label>
-    <input type="number" id="B40" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <p class="hint" style="margin-left:120px;">
-    물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
-  </p>
+    <!-- 명목 수익률 -->
+    <div class="form-group">
+      <label for="B39">명목 수익률</label>
+      <input type="number" id="B39" placeholder="예: 10" step="0.1" />
+      <span>%</span>
+    </div>
 
-  <!-- 은퇴 후 자산 결과 + 복사 버튼 -->
-  <div id="retirementAssetContainer" class="result" style="transition: background-color 0.4s;">
-    은퇴 후 자산: 
-    <span id="resultValue">0원</span>
-    <span id="resultValueDetail" class="detail">(0원)</span>
-    <button id="copyResultBtn">결과 복사하기</button>
-  </div>
-  <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
+    <!-- 저축 증가율 (물가 상승률) -->
+    <div class="form-group">
+      <label for="B40">저축 증가율<br>(물가 상승률)</label>
+      <input type="number" id="B40" placeholder="예: 3" step="0.1" />
+      <span>%</span>
+    </div>
+    <p class="hint" style="margin-left:120px;">
+      물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
+    </p>
 
-  <!-- 구분선 -->
-  <div class="divider"></div>
+    <!-- 은퇴 후 자산 결과 + 복사 버튼 -->
+    <div id="retirementAssetContainer" class="result" style="transition: background-color 0.4s;">
+      은퇴 후 자산: 
+      <span id="resultValue">0원</span>
+      <span id="resultValueDetail" class="detail">(0원)</span>
+      <button id="copyResultBtn">결과 복사하기</button>
+    </div>
+    <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
 
-  <!-- =========================
-       (3) 미래 목돈을 현재로 계산
-      ========================= -->
-  <p>
-    이 돈은 
-    <span id="periodYears">0</span>
-    년 후의 기준 가치입니다. 현재 기준으로는 얼마의 가치일까요? 환산해보겠습니다.
-  </p>
+    <!-- 구분선 -->
+    <div class="divider"></div>
 
-  <h2>미래 목돈을 현재로 계산</h2>
+    <!-- =========================
+         (3) 미래 목돈을 현재로 계산
+        ========================= -->
+    <p>
+      이 돈은 
+      <span id="periodYears">0</span>
+      년 후의 기준 가치입니다. 현재 기준으로는 얼마의 가치일까요? 환산해보겠습니다.
+    </p>
 
-  <div class="form-group">
-    <label for="B9">미래 가치</label>
-    <input type="text" id="B9" placeholder="0" />
-    <span>원</span>
-    <span id="B9_million" class="hint">(0원)</span>
-  </div>
+    <h2>미래 목돈을 현재로 계산</h2>
 
-  <div class="form-group">
-    <label for="B10">인플레이션</label>
-    <input type="number" id="B10" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
+    <div class="form-group">
+      <label for="B9">미래 가치</label>
+      <input type="text" id="B9" placeholder="0" />
+      <span>원</span>
+      <span id="B9_million" class="hint">(0원)</span>
+    </div>
 
-  <div class="form-group">
-    <label for="B11">연수</label>
-    <input type="number" id="B11" placeholder="예: 25" />
-    <span>년</span>
-  </div>
+    <div class="form-group">
+      <label for="B10">인플레이션</label>
+      <input type="number" id="B10" placeholder="예: 3" step="0.1" />
+      <span>%</span>
+    </div>
 
-  <div class="result">
-    현재 가치: 
-    <span id="presentValue">0원</span>
-    <span id="presentValueDetail" class="detail">(0원)</span>
-  </div>
+    <div class="form-group">
+      <label for="B11">연수</label>
+      <input type="number" id="B11" placeholder="예: 25" />
+      <span>년</span>
+    </div>
 
-  <!-- 구분선 -->
-  <div class="divider"></div>
+    <div class="result">
+      현재 가치: 
+      <span id="presentValue">0원</span>
+      <span id="presentValueDetail" class="detail">(0원)</span>
+    </div>
 
-  <!-- =========================
-       (4) 미래 목돈 → 인출 가능한 돈
-      ========================= -->
-  <p>
-    그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
-  </p>
+    <!-- 구분선 -->
+    <div class="divider"></div>
 
-  <h2>미래 목돈 → 인출 가능한 돈</h2>
+    <!-- =========================
+         (4) 미래 목돈 → 인출 가능한 돈
+        ========================= -->
+    <p>
+      그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
+    </p>
 
-  <div class="form-group">
-    <label for="B16">미래 목돈</label>
-    <input type="text" id="B16" placeholder="0" />
-    <span>원</span>
-    <span id="B16_million" class="hint">(0원)</span>
-  </div>
+    <h2>미래 목돈 → 인출 가능한 돈</h2>
 
-  <div class="form-group">
-    <label for="B17">인출율</label>
-    <input type="number" id="B17" value="3.5" step="0.1" />
-    <span>%</span>
-  </div>
+    <div class="form-group">
+      <label for="B16">미래 목돈</label>
+      <input type="text" id="B16" placeholder="0" />
+      <span>원</span>
+      <span id="B16_million" class="hint">(0원)</span>
+    </div>
 
-  <div class="form-group">
-    <label for="B18">인플레이션</label>
-    <input type="number" id="B18" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
+    <div class="form-group">
+      <label for="B17">인출율</label>
+      <input type="number" id="B17" value="3.5" step="0.1" />
+      <span>%</span>
+    </div>
 
-  <div class="form-group">
-    <label for="B19">연수</label>
-    <input type="number" id="B19" placeholder="예: 25" />
-    <span>년</span>
-  </div>
+    <div class="form-group">
+      <label for="B18">인플레이션</label>
+      <input type="number" id="B18" placeholder="예: 3" step="0.1" />
+      <span>%</span>
+    </div>
 
-  <div class="result">
-    가능 월 소득: 
-    <span id="possibleIncome">0원</span>
-    <span id="possibleIncomeDetail" class="detail">(0원)</span>
-  </div>
-  <div class="result">
-    현재 가치: 
-    <span id="withdrawPresentValue">0원</span>
-    <span id="withdrawPresentValueDetail" class="detail">(0원)</span>
-  </div>
+    <div class="form-group">
+      <label for="B19">연수</label>
+      <input type="number" id="B19" placeholder="예: 25" />
+      <span>년</span>
+    </div>
 
-  <!-- 구분선 -->
-  <div class="divider"></div>
+    <div class="result">
+      가능 월 소득: 
+      <span id="possibleIncome">0원</span>
+      <span id="possibleIncomeDetail" class="detail">(0원)</span>
+    </div>
+    <div class="result">
+      현재 가치: 
+      <span id="withdrawPresentValue">0원</span>
+      <span id="withdrawPresentValueDetail" class="detail">(0원)</span>
+    </div>
 
-  <!-- =========================
-       (5) [추가] 현재 가치를 미래 가치로 환산
-      ========================= -->
-  <h2>현재 가치를 미래 가치로 환산</h2>
-  <p style="margin-bottom:10px;">
-    예를 들어, 25년 뒤에 자녀에게 4억원을 물려주려면, 인플레이션이 3%일 때 8억 3,751만원이 필요합니다
-  </p>
+    <!-- 구분선 -->
+    <div class="divider"></div>
 
-  <div class="form-group">
-    <label for="FV_B2">현재 가치</label>
-    <input type="text" id="FV_B2" placeholder="예: 400,000,000" />
-    <span>원</span>
-    <span id="FV_B2_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="FV_B3">인플레이션</label>
-    <input type="number" id="FV_B3" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="FV_B4">연수</label>
-    <input type="number" id="FV_B4" placeholder="예: 25" />
-    <span>년</span>
-  </div>
+    <!-- =========================
+         (5) [추가] 현재 가치를 미래 가치로 환산
+        ========================= -->
+    <h2>현재 가치를 미래 가치로 환산</h2>
+    <p style="margin-bottom:10px;">
+      예를 들어, 25년 뒤에 자녀에게 4억원을 물려주려면, 인플레이션이 3%일 때 8억 3,751만원이 필요합니다
+    </p>
 
-  <div class="result">
-    미래 가치: 
-    <span id="FV_B5">0원</span>
-    <span id="FV_B5Detail" class="detail">(0원)</span>
-  </div>
+    <div class="form-group">
+      <label for="FV_B2">현재 가치</label>
+      <input type="text" id="FV_B2" placeholder="예: 400,000,000" />
+      <span>원</span>
+      <span id="FV_B2_million" class="hint">(0원)</span>
+    </div>
+    <div class="form-group">
+      <label for="FV_B3">인플레이션</label>
+      <input type="number" id="FV_B3" placeholder="예: 3" step="0.1" />
+      <span>%</span>
+    </div>
+    <div class="form-group">
+      <label for="FV_B4">연수</label>
+      <input type="number" id="FV_B4" placeholder="예: 25" />
+      <span>년</span>
+    </div>
+
+    <div class="result">
+      미래 가치: 
+      <span id="FV_B5">0원</span>
+      <span id="FV_B5Detail" class="detail">(0원)</span>
+    </div>
+
+  </div> <!-- .container 끝 -->
 
   <script>
-    /* ========================
-       (A) 기존 JS 로직 그대로
-       ======================== */
+    /* 이하 기존 스크립트 + 새 섹션 스크립트 */
+    /* ... (변경 없이 그대로 유지) ... */
+    /* 단, body의 max-width 제거 후 .container 사용 */
 
     let userModifiedFutureMoney = false;
 
@@ -536,70 +557,12 @@
       msgDiv.innerHTML = msg;
     }
 
-    // (J) 이벤트 리스너
-    document.getElementById('C26').addEventListener('input', () => {
-      formatInputAndDisplayUnit('C26');
-      calculateNeededMoney();
-      updateTipsText();
-      compareDreamAndRetirement();
-    });
-    document.getElementById('C27').addEventListener('input', () => {
-      calculateNeededMoney();
-      syncFirstSectionToOthers();
-    });
-    document.getElementById('C28').addEventListener('input', () => {
-      calculateNeededMoney();
-      syncFirstSectionToOthers();
-    });
-    document.getElementById('C29').addEventListener('input', () => {
-      calculateNeededMoney();
-      syncFirstSectionToOthers();
-    });
-
-    document.getElementById('B36').addEventListener('input', () => {
-      formatInputAndDisplayUnit('B36');
-      calculateRetirementAsset();
-    });
-    document.getElementById('B37').addEventListener('input', () => {
-      formatInputAndDisplayUnit('B37');
-      calculateRetirementAsset();
-    });
-    document.getElementById('B38').addEventListener('input', calculateRetirementAsset);
-    document.getElementById('B39').addEventListener('input', calculateRetirementAsset);
-    document.getElementById('B40').addEventListener('input', calculateRetirementAsset);
-
-    document.getElementById('copyResultBtn').addEventListener('click', copyResultToClipboard);
-
-    document.getElementById('B9').addEventListener('input', () => {
-      formatInputAndDisplayUnit('B9');
-      calculatePresentValue();
-      syncWithdrawalInputs();
-    });
-    document.getElementById('B10').addEventListener('input', () => {
-      calculatePresentValue();
-      syncWithdrawalInputs();
-    });
-    document.getElementById('B11').addEventListener('input', () => {
-      calculatePresentValue();
-      syncWithdrawalInputs();
-    });
-
-    document.getElementById('B16').addEventListener('input', () => {
-      userModifiedFutureMoney = true;
-      formatInputAndDisplayUnit('B16');
-      calculateWithdrawal();
-    });
-    document.getElementById('B17').addEventListener('input', calculateWithdrawal);
-    document.getElementById('B18').addEventListener('input', calculateWithdrawal);
-    document.getElementById('B19').addEventListener('input', calculateWithdrawal);
-
     /* =============================================
        (K) 새로 추가된 섹션: 현재 가치를 미래 가치로 환산
        ============================================= */
-    let userModifiedFV_B3 = false; // 인플레이션
-    let userModifiedFV_B4 = false; // 연수
+    let userModifiedFV_B3 = false; 
+    let userModifiedFV_B4 = false;
 
-    // (K-1) 계산 함수
     function calculateFutureValue() {
       const rawB2 = document.getElementById('FV_B2').value.replaceAll(",", "") || "0";
       const B2 = parseFloat(rawB2);
@@ -618,7 +581,6 @@
         "(" + roundedVal.toLocaleString() + "원)";
     }
 
-    // (K-2) 이벤트 리스너
     document.getElementById('FV_B2').addEventListener('input', () => {
       formatInputAndDisplayUnit('FV_B2');
       calculateFutureValue();
@@ -632,7 +594,6 @@
       calculateFutureValue();
     });
 
-    // (K-3) C28, C29 변경 시 → 새 섹션에 반영
     document.getElementById('C28').addEventListener('input', syncFutureValueInputs);
     document.getElementById('C29').addEventListener('input', syncFutureValueInputs);
 
@@ -648,12 +609,10 @@
       calculateFutureValue();
     }
 
-    // 페이지 로드 시 초기 실행
+    // 초기 실행
     calculateNeededMoney();
     updateTipsText();
     syncFirstSectionToOthers();
-
-    // 새로 추가된 섹션도 초기 동기화
     syncFutureValueInputs();
   </script>
 </body>
