@@ -2,24 +2,26 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
+  <!-- 반응형을 위해 viewport 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>꿈 계산기</title>
+
   <style>
     body {
       font-family: sans-serif;
       margin: 20px auto;
       line-height: 1.6;
-      max-width: 600px;  /* 본문 폭 600px 고정, 중앙 배치 */
+      max-width: 600px;
 
-      /* (1) 기본 좌우 패딩 추가 */
+      /* 모바일에서 좌우 여백 */
       padding: 0 20px;
-      box-sizing: border-box; /* 테두리/패딩 포함 계산 */
+      box-sizing: border-box;
     }
 
-    /* (2) 모바일 화면에서 좌우 여백을 더 주거나 조절 가능 */
+    /* 화면 폭이 600px 이하일 때 추가 여백 (선택) */
     @media (max-width: 600px) {
       body {
-        padding: 0 30px; /* 더 넓은 여백을 주고 싶다면 값 조절 */
+        padding: 0 30px;
       }
     }
 
@@ -38,12 +40,12 @@
       align-items: center;
     }
     .form-group label {
-      width: 120px; /* 모든 라벨 폭을 동일하게 */
+      width: 120px;
     }
     .form-group input {
       width: 150px;
       padding: 5px;
-      text-align: right; /* 숫자 오른쪽 정렬 */
+      text-align: right;
     }
     .form-group span {
       margin-left: 5px;
@@ -117,13 +119,8 @@
     <span id="C32Detail" class="detail">(0원)</span>
   </div>
 
-  <!-- 한 줄 간격 -->
   <div style="height:10px;"></div>
-
-  <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
   <p id="tipsText" style="line-height:1.5; margin:0;"></p>
-
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -177,7 +174,6 @@
   </div>
   <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -188,7 +184,6 @@
     <span id="periodYears">0</span>
     년 후의 기준 가치입니다. 현재 기준으로는 얼마의 가치일까요? 환산해보겠습니다.
   </p>
-
   <h2>미래 목돈을 현재로 계산</h2>
 
   <div class="form-group">
@@ -214,7 +209,6 @@
     <span id="presentValueDetail" class="detail">(0원)</span>
   </div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -223,7 +217,6 @@
   <p>
     그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
   </p>
-
   <h2>미래 목돈 → 인출 가능한 돈</h2>
 
   <div class="form-group">
@@ -259,7 +252,6 @@
     <span id="withdrawPresentValueDetail" class="detail">(0원)</span>
   </div>
 
-  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -293,10 +285,10 @@
     <span id="FV_B5Detail" class="detail">(0원)</span>
   </div>
 
+  <!-- 스크립트는 그대로 (함수, 로직 삭제 금지). 아래 위치가 중요 -->
   <script>
-    /* (기존 JS 로직 - 수정 금지) */
-    ... 
-    /* (생략 - 함수, 이벤트 리스너 등 기존 코드) */
+    /* 기존 JS 로직 (동일) */
+    /* ... */
   </script>
 </body>
 </html>
