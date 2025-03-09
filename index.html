@@ -2,16 +2,17 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <!-- 반응형 + iOS 확대 방지(폰트 16px 이상) -->
+  <!-- 확대는 허용하되, 자동 확대를 막기 위해 입력 폰트 크기를 16px 이상으로 설정 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>꿈 계산기</title>
   <style>
-    /* ===== 레이아웃 & 반응형 ===== */
     body {
       font-family: sans-serif;
-      margin: 20px auto;
+      /* 중앙 정렬 */
+      margin: 20px auto; 
       line-height: 1.6;
-      max-width: 600px;
+      max-width: 600px;  /* 본문 폭 600px 고정, 중앙 배치 */
+      
       /* 모바일에서 좌우 여백 확보 */
       padding: 0 20px;
       box-sizing: border-box;
@@ -22,47 +23,29 @@
         font-size: 14px; /* 화면 작아질 때 폰트 축소 */
       }
     }
-
-    /* ===== 큰 제목 (꿈 계산기) ===== */
+    /* h1을 3배 크기로 + 중앙 정렬 */
     h1 {
       margin-bottom: 10px;
       text-align: center;
       font-size: 300%; 
     }
-
-    /* ===== 섹션 제목 & 상단 여백 ===== */
     h2 {
-      margin-top: 40px; /* 섹션 구분 위해 상단 여백 추가 */
       margin-bottom: 10px;
     }
-
-    /* ===== form-group: 라벨 + 인풋 한 줄 배치 + 일정 간격 ===== */
     .form-group {
+      margin-bottom: 15px;
       display: flex;
       align-items: center;
-      margin-bottom: 15px;
     }
     .form-group label {
-      width: 120px;
-      margin-right: 10px;
+      width: 120px; /* 모든 라벨 폭을 동일하게 */
     }
-
-    /* ===== 밑줄 인풋 스타일 ===== */
     .form-group input {
       width: 150px;
       padding: 5px;
-      text-align: right;
-      font-size: 16px; /* iOS 자동 확대 방지 */
-      border: none;
-      border-bottom: 1px solid #ccc;
-      background: transparent;
-      outline: none;
-      transition: border-color 0.2s ease;
+      text-align: right; /* 숫자 오른쪽 정렬 */
+      font-size: 16px;   /* iOS 자동 확대 방지 */
     }
-    .form-group input:focus {
-      border-bottom: 2px solid #2196F3; /* 포커스 시 파란색 강조 */
-    }
-
     .form-group span {
       margin-left: 5px;
     }
@@ -70,8 +53,6 @@
       color: #666;
       margin-left: 10px;
     }
-
-    /* ===== 결과 & 디테일 텍스트 ===== */
     .result {
       margin-top: 20px;
       font-weight: bold;
@@ -82,36 +63,88 @@
       color: #333;
       margin-left: 6px;
     }
-
-    /* ===== 구분선 (divider) ===== */
     .divider {
       margin: 30px 0;
       border-top: 1px solid #ccc;
     }
-
-    /* ===== Material-like 버튼 ===== */
     button {
+      margin-left: 10px;
+      cursor: pointer;
+      font-size: 16px; /* Material-like 버튼에 맞춰 폰트 16px */
+    }
+    /* 입력 요소 폰트 크기를 16px 이상으로 설정 (자동 확대 방지) */
+    input, select, textarea {
+      font-size: 16px;
+    }
+
+    /* 추가: Material-like 버튼 스타일 (원하면 더 꾸며도 됨) */
+    .material-btn {
       background-color: #2196F3;
       border: none;
       color: #fff;
       border-radius: 4px;
       padding: 8px 16px;
-      font-size: 16px;
-      cursor: pointer;
       transition: background-color 0.2s ease;
-      margin-left: 10px; 
     }
-    button:hover {
+    .material-btn:hover {
       background-color: #1976D2;
-    }
-
-    /* 입력 요소 폰트 크기를 16px 이상으로 설정 (자동 확대 방지) */
-    input, select, textarea {
-      font-size: 16px;
     }
   </style>
 </head>
 <body>
+
+  <!-- =========================
+       (0) 안내문 열기/접기 버튼 + 숨겨진 안내문
+      ========================= -->
+  <button id="toggleUsageBtn" class="material-btn" style="margin: 20px 0;">
+    처음 오셨다면 이 글부터 읽어주세요 → 사용법 (✈️)
+  </button>
+
+  <div id="usageBox" style="display:none; margin-top:10px; line-height:1.5;">
+    <p>
+      당신이 꿈꾸는 미래가 왔습니다. 한 달에 얼마를 사용하고 있나요?
+      <br><br>
+      예를 들어, ‘20년 뒤에 은퇴할 때, 나는 3달에 한 번은 해외여행을 다닐거야.
+      그러면 적어도 월 450만원은 사용하고 싶다‘ 라고 해보겠습니다.
+    </p>
+    <p>
+      이 때, 월 450만원은 현재 가치로 450만원이라고 해보겠습니다. 20년 뒤 450만원은 
+      현재 가치로는 249만원입니다. 따라서, 머리 아프게 계산하지 말고,
+      ‘현재 가치 기준으로 미래에 원하는 월 생활비’를 입력하세요.
+    </p>
+    <p>
+      ‘돈을 그냥 꺼내 써도 되나?’라는 생각이 드실 수도 있습니다. 
+      <br><br>
+      그런데 만약 월 450만원을 사용해도 자산이 계속 늘어나서 그런 삶을 유지할 수 있다면 어떨까요?
+    </p>
+    <p>
+      원금이 줄어든다고요? 하지만 예를 들어, 20억원이 있고 연평균 수익률이 10%라면 
+      매년 2억원을 사용해도 될 겁니다.
+    </p>
+    <p>
+      ’하지만 물가가 오르면 어떻게 해? 돈의 가치는 계속 줄어들잖아‘ <br>
+      ’만약 주가가 떨어져서 수익률도 떨어지면 어떻게 해?‘ <br>
+      ‘아슬아슬 하잖아’
+      <br><br>
+      맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.
+    </p>
+    <p>
+      매년 3% 만큼은 물가가 오르는 것에 대비하여 가만히 두세요.
+      <br><br>
+      그리고 나머지 중 일부만 인출하고, 또 일부는 자산 자체의 가치가 상승하도록 남겨두세요.
+    </p>
+    <p>
+      이 때, ‘일부만 인출’ 하기로 했는데 그것이 바로 ‘인출율’입니다. 
+      <br><br>
+      그럼 인출율은 몇 %로 정하면 좋을까요?
+    </p>
+    <p>
+      인출율 정하는 팁 : 0년 뒤에도 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 
+      인출율 4%도 괜찮습니다.
+      <br><br>
+      하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 3.5%로 설정하는 것을 추천합니다.
+    </p>
+  </div>
 
   <!-- =========================
        (1) 원하는 월 생활비 → 미래에 필요한 목돈
@@ -158,8 +191,11 @@
 
   <!-- 한 줄 간격 -->
   <div style="height:10px;"></div>
+
   <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
   <p id="tipsText" style="line-height:1.5; margin:0;"></p>
+
+  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
@@ -324,12 +360,23 @@
     <span id="FV_B5Detail" class="detail">(0원)</span>
   </div>
 
-  <!-- ===== JS: DOM 아래에 배치하여 기능이 정상 작동 ===== -->
+  <!-- ===== JS: DOM 아래에 배치 ===== -->
   <script>
-    /* ========================
-       (A) 기존 JS 로직 그대로
-       ======================== */
+    /* 1) 추가: 열기/접기 기능 JS */
+    document.addEventListener("DOMContentLoaded", () => {
+      const toggleBtn = document.getElementById("toggleUsageBtn");
+      const usageBox = document.getElementById("usageBox");
 
+      toggleBtn.addEventListener("click", () => {
+        if (usageBox.style.display === "none") {
+          usageBox.style.display = "block";
+        } else {
+          usageBox.style.display = "none";
+        }
+      });
+    });
+
+    /* 2) 기존 JS 로직 (수정 X) */
     let userModifiedFutureMoney = false;
 
     function formatKoreanUnits(valueInWon) {
