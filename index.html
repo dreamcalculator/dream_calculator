@@ -102,27 +102,23 @@
 <body>
 
   <!-- =========================
-       (0) "꿈 계산기" 제목 + 링크
+       (0) "꿈 계산기" 제목
       ========================= -->
   <h1>꿈 계산기</h1>
-  <!-- (3) 제목 아래에 일반 텍스트 크기로 웹사이트 홍보 -->
-  <p style="text-align:center; font-size:14px; margin:0;">
-    (https://3340887kgh.github.io/dream_calculator/)
-  </p>
 
   <!-- =========================
-       (0-A) 네이버 블로그 링크 버튼 (초록색)
-      ========================= -->
-  <button id="blogLinkBtn" class="material-btn naver-btn" style="margin: 20px 0;"
-    onclick="window.open('https://m.blog.naver.com/kgh_investment','_blank');">
-    네이버 블로그 무료 칼럼 모음
-  </button>
-
-  <!-- =========================
-       (0-B) 열기/접기 버튼 (파란색)
+       (0-A) 열기/접기 버튼 (파란색)
       ========================= -->
   <button id="toggleUsageBtn" class="material-btn blue-btn" style="margin: 20px 0;">
     처음 오셨다면 이 글부터 읽어주세요 → 사용법 (✈️)
+  </button>
+
+  <!-- =========================
+       (0-B) 네이버 블로그 링크 버튼 (초록색)
+      ========================= -->
+  <button id="blogLinkBtn" class="material-btn naver-btn" style="margin: 10px 0;"
+    onclick="window.open('https://m.blog.naver.com/kgh_investment','_blank');">
+    네이버 블로그 무료 칼럼 모음
   </button>
 
   <!-- =========================
@@ -130,17 +126,16 @@
       ========================= -->
   <div id="usageBox" style="display:none; margin-top:10px; line-height:1.5;">
     <p>
-      <span style="background-color:yellow;">
-        당신이 꿈꾸는 미래가 왔습니다. 한 달에 얼마를 사용하고 있나요?
-      </span>
+      <span style="background-color:yellow;">당신이 꿈꾸는 미래가 왔습니다.</span> 한 달에 얼마를 사용하고 있나요?
       <br><br>
       예를 들어, ‘20년 뒤에 은퇴할 때, 나는 3달에 한 번은 해외여행을 다닐거야.
       그러면 적어도 월 450만원은 사용하고 싶다‘ 라고 해보겠습니다.
     </p>
     <p>
-      이 때, 월 450만원은 현재 가치 기준으로 450만원이라고 해보겠습니다. 20년 뒤 450만원은 
-      현재 가치로는 249만원입니다. 따라서, 머리 아프게 계산하지 말고,
-      ‘현재 가치 기준으로 미래에 원하는 월 생활비’를 입력하세요.
+      이 때, 월 450만원은 <span style="background-color:yellow;">현재 가치 기준으로</span> 450만원이라고 해보겠습니다.
+      20년 뒤 450만원은 현재 가치로는 249만원입니다.
+      따라서, 머리 아프게 계산하지 말고,
+      ‘<span style="background-color:yellow;">현재 가치 기준으로</span> 미래에 원하는 월 생활비’를 입력하세요.
     </p>
     <p>
       ‘돈을 그냥 꺼내 써도 되나?’라는 생각이 드실 수도 있습니다. 
@@ -148,37 +143,31 @@
       그런데 만약 월 450만원을 사용해도 자산이 계속 늘어나서 그런 삶을 유지할 수 있다면 어떨까요?
     </p>
     <p>
-      원금이 줄어든다고요? 하지만 예를 들어, 20억원이 있고 연평균 수익률이 10%라면 
-      매년 2억원을 사용해도 될 겁니다.
+      <span style="background-color:yellow;">원금이 줄어든다고요?</span> 하지만 예를 들어, 20억원이 있고
+      연평균 수익률이 10%라면 매년 2억원을 사용해도 될 겁니다.
     </p>
     <p>
       ’하지만 물가가 오르면 어떻게 해? 돈의 가치는 계속 줄어들잖아‘ <br>
       ’만약 주가가 떨어져서 수익률도 떨어지면 어떻게 해?‘ <br>
       ‘아슬아슬 하잖아’
       <br><br>
-      <span style="background-color:yellow;">
-        맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.
-      </span>
+      맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.
     </p>
     <p>
-      매년 3% 만큼은 물가가 오르는 것에 대비하여 가만히 두세요.
+      <span style="background-color:yellow;">매년 3% 만큼은</span> 물가가 오르는 것에 대비하여 가만히 두세요.
       <br><br>
       그리고 나머지 중 일부만 인출하고, 또 일부는 자산 자체의 가치가 상승하도록 남겨두세요.
     </p>
     <p>
-      <span style="background-color:yellow;">
-        이 때, ‘일부만 인출’ 하기로 했는데 그것이 바로 ‘인출율’입니다.
-      </span>
+      이 때, ‘일부만 인출’ 하기로 했는데 그것이 바로 ‘인출율’입니다. 
       <br><br>
       그럼 인출율은 몇 %로 정하면 좋을까요?
     </p>
     <p>
-      인출율 정하는 팁 : 은퇴 시점에 부업이나 근로소득으로
-      생활비의 일부라도 충당할 수 있을 것으로 보인다면 
-      <span style="background-color:yellow;">4%</span>도 괜찮습니다.
+      인출율 정하는 팁 : <span style="background-color:yellow;">은퇴 시점에</span> 부업이나 근로소득으로
+      생활비의 일부라도 충당할 수 있을 것으로 보인다면 인출율 4%도 괜찮습니다.
       <br><br>
-      하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 
-      <span style="background-color:yellow;">3.5%</span>로 설정하는 것을 추천합니다.
+      하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 3.5%로 설정하는 것을 추천합니다.
     </p>
   </div>
 
@@ -212,6 +201,7 @@
     <span>%</span>
   </div>
 
+  <!-- 결과 -->
   <div class="result">
     필요한 돈: 
     <span id="C31">0원</span>
@@ -225,14 +215,16 @@
 
   <!-- 한 줄 간격 -->
   <div style="height:10px;"></div>
-  <!-- tipsText는 여기서도 남겨두되, 비워둠 -->
+
+  <!-- tipsText는 사용하지 않으므로 비워둠 -->
   <p id="tipsText" style="line-height:1.5; margin:0;"></p>
 
+  <!-- 구분선 -->
   <div class="divider"></div>
 
   <!-- =========================
        (2) 낙원 계산기 (제목만 바뀐 상태)
-       (인출율 정하는 팁 문구 삭제됨)
+       (인출율 정하는 팁 문구는 삭제)
       ========================= -->
   <h2>낙원 계산기</h2>
   <p>
@@ -478,8 +470,8 @@
         "(" + presentValueRounded.toLocaleString() + "원)";
     }
 
+    /* '낙원 계산기' 위 텍스트였던 updateTipsText는 비워둠 */
     function updateTipsText() {
-      // 기존 "인출율 정하는 팁" 문구는 삭제 요청, 여기서는 비워둠
       document.getElementById('tipsText').innerHTML = "";
     }
 
@@ -491,516 +483,6 @@
       const B38 = parseInt(document.getElementById('B38').value) || 0;    
       const B39 = parseFloat(document.getElementById('B39').value) || 0; 
       const B40 = parseFloat(document.getElementById('B40').value) || 0; 
-
-      const nominalRate = B39 / 100;
-      const savingGrowthRate = B40 / 100;
-
-      let result = 0;
-      if (nominalRate === savingGrowthRate) {
-        result = B36 * Math.pow
-
-아래는 기존 코드를 그대로 유지하면서, 요청하신 부분만 수정·추가한 최종 전체 코드입니다.
-
-**변경 사항:**
-
-1. **네이버 블로그 버튼(초록색)**을 **열기/접기 버튼(파란색)**보다 위에 배치하였습니다.
-2. 열기/접기 버튼을 누르면 나타나는 안내문의 기존 형광펜 효과를 모두 제거하고,  
-   대신 아래의 문구에만 배경 노란색 강조 효과를 주었습니다.  
-   - “당신이 꿈꾸는 미래가 왔습니다. 한 달에 얼마를 사용하고 있나요?”  
-   - “맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.”  
-   - “이 때, ‘일부만 인출’ 하기로 했는데 그것이 바로 ‘인출율’입니다.”  
-   - “4%”  
-   - “3.5%”
-3. “꿈 계산기” 제목 바로 아래에 `(https://3340887kgh.github.io/dream_calculator/)`라는 작은 링크 텍스트를 추가하였습니다.
-4. 그 외 기존 기능(계산 함수, 이벤트 리스너 등)은 전혀 수정하지 않았습니다.
-
-아래 코드를 그대로 사용하시면 됩니다.
-
----
-
-```html
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8" />
-  <!-- 확대는 허용하되, 자동 확대를 막기 위해 입력 폰트 크기를 16px 이상으로 설정 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>꿈 계산기</title>
-  <style>
-    /* ===== 레이아웃 & 반응형 ===== */
-    body {
-      font-family: sans-serif;
-      margin: 20px auto;
-      line-height: 1.6;
-      max-width: 600px;
-      padding: 0 20px;
-      box-sizing: border-box;
-    }
-    @media (max-width: 600px) {
-      body {
-        padding: 0 30px;
-        font-size: 14px;
-      }
-    }
-
-    /* ===== 큰 제목 ===== */
-    h1 {
-      margin-bottom: 10px;
-      text-align: center;
-      font-size: 300%; 
-    }
-    /* 제목 아래 링크 */
-    .site-link {
-      text-align: center;
-      font-size: 14px;
-      margin: 0;
-    }
-
-    h2 {
-      margin-bottom: 10px;
-    }
-    .form-group {
-      margin-bottom: 15px;
-      display: flex;
-      align-items: center;
-    }
-    .form-group label {
-      width: 120px;
-      margin-right: 10px;
-    }
-    .form-group input {
-      width: 150px;
-      padding: 5px;
-      text-align: right;
-      font-size: 16px;
-      border: none;
-      border-bottom: 1px solid #ccc;
-      background: transparent;
-      outline: none;
-      transition: border-color 0.2s ease;
-    }
-    .form-group input:focus {
-      border-bottom: 2px solid #2196F3;
-    }
-    .form-group span {
-      margin-left: 5px;
-    }
-    .hint {
-      color: #666;
-      margin-left: 10px;
-    }
-    .result {
-      margin-top: 20px;
-      font-weight: bold;
-      font-size: 1.2em;
-    }
-    .detail {
-      font-size: 0.8em; 
-      color: #333;
-      margin-left: 6px;
-    }
-    .divider {
-      margin: 30px 0;
-      border-top: 1px solid #ccc;
-    }
-    button {
-      margin-left: 10px;
-      cursor: pointer;
-      font-size: 16px;
-    }
-    input, select, textarea {
-      font-size: 16px;
-    }
-    /* ===== Material-like 버튼 스타일 ===== */
-    .material-btn {
-      border: none;
-      color: #fff;
-      border-radius: 4px;
-      padding: 8px 16px;
-      transition: background-color 0.2s ease;
-      cursor: pointer;
-    }
-    .material-btn:hover {
-      opacity: 0.9;
-    }
-    /* 파란색 버튼 */
-    .blue-btn {
-      background-color: #2196F3;
-    }
-    /* 네이버 블로그 버튼 (초록색) */
-    .naver-btn {
-      background-color: #00C73C;
-    }
-  </style>
-</head>
-<body>
-
-  <!-- (0) "꿈 계산기" 제목 -->
-  <h1>꿈 계산기</h1>
-  <!-- 제목 아래에 사이트 링크 -->
-  <p class="site-link">(https://3340887kgh.github.io/dream_calculator/)</p>
-
-  <!-- (0-A) 네이버 블로그 링크 버튼 (초록색) - **위쪽에 배치**
-       클릭 시 새 창으로 이동 -->
-  <button id="blogLinkBtn" class="material-btn naver-btn" style="margin: 20px 0;"
-    onclick="window.open('https://m.blog.naver.com/kgh_investment','_blank');">
-    네이버 블로그 무료 칼럼 모음
-  </button>
-
-  <!-- (0-B) 열기/접기 버튼 (파란색) -->
-  <button id="toggleUsageBtn" class="material-btn blue-btn" style="margin: 20px 0;">
-    처음 오셨다면 이 글부터 읽어주세요 → 사용법 (✈️)
-  </button>
-
-  <!-- (0-C) 숨겨진 안내문 -->
-  <div id="usageBox" style="display:none; margin-top:10px; line-height:1.5;">
-    <p>
-      <span style="background-color:yellow;">당신이 꿈꾸는 미래가 왔습니다. 한 달에 얼마를 사용하고 있나요?</span>
-      <br><br>
-      예를 들어, ‘20년 뒤에 은퇴할 때, 나는 3달에 한 번은 해외여행을 다닐거야.
-      그러면 적어도 월 450만원은 사용하고 싶다‘ 라고 해보겠습니다.
-    </p>
-    <p>
-      이 때, 월 450만원은 현재 가치 기준으로 450만원이라고 해보겠습니다. 20년 뒤 450만원은 현재 가치로는 249만원입니다.
-      따라서, 머리 아프게 계산하지 말고, ‘현재 가치 기준으로 미래에 원하는 월 생활비’를 입력하세요.
-    </p>
-    <p>
-      ‘돈을 그냥 꺼내 써도 되나?’라는 생각이 드실 수도 있습니다.
-      <br><br>
-      그런데 만약 월 450만원을 사용해도 자산이 계속 늘어나서 그런 삶을 유지할 수 있다면 어떨까요?
-    </p>
-    <p>
-      원금이 줄어든다고요? 하지만 예를 들어, 20억원이 있고 연평균 수익률이 10%라면 매년 2억원을 사용해도 될 겁니다.
-    </p>
-    <p>
-      ’하지만 물가가 오르면 어떻게 해? 돈의 가치는 계속 줄어들잖아‘<br>
-      ’만약 주가가 떨어져서 수익률도 떨어지면 어떻게 해?‘<br>
-      ‘아슬아슬 하잖아’
-      <br><br>
-      <span style="background-color:yellow;">맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.</span>
-    </p>
-    <p>
-      매년 3% 만큼은 물가가 오르는 것에 대비하여 가만히 두세요.
-      <br><br>
-      그리고 나머지 중 일부만 인출하고, 또 일부는 자산 자체의 가치가 상승하도록 남겨두세요.
-    </p>
-    <p>
-      <span style="background-color:yellow;">이 때, ‘일부만 인출’ 하기로 했는데 그것이 바로 ‘인출율’입니다.</span>
-      <br><br>
-      그럼 인출율은 몇 %로 정하면 좋을까요?
-    </p>
-    <p>
-      인출율 정하는 팁 : <span style="background-color:yellow;">은퇴 시점에</span> 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 <span style="background-color:yellow;">4%</span>도 괜찮습니다.
-      <br><br>
-      하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 <span style="background-color:yellow;">3.5%</span>로 설정하는 것을 추천합니다.
-    </p>
-  </div>
-
-  <!-- =========================
-       (1) 원하는 월 생활비 → 미래에 필요한 목돈
-      ========================= -->
-  <p>
-    현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
-  </p>
-  <h2>원하는 월 생활비 → 미래에 필요한 목돈</h2>
-
-  <div class="form-group">
-    <label for="C26">원하는 월 생활비</label>
-    <input type="text" id="C26" placeholder="예: 4,500,000" />
-    <span>원</span>
-    <span id="C26_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="C27">인출율</label>
-    <input type="number" id="C27" placeholder="예: 3.5" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="C28">연수</label>
-    <input type="number" id="C28" placeholder="예: 20" />
-    <span>년</span>
-  </div>
-  <div class="form-group">
-    <label for="C29">인플레이션</label>
-    <input type="number" id="C29" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-
-  <div class="result">
-    필요한 돈: 
-    <span id="C31">0원</span>
-    <span id="C31Detail" class="detail">(0원)</span>
-  </div>
-  <div class="result">
-    현재 가치: 
-    <span id="C32">0원</span>
-    <span id="C32Detail" class="detail">(0원)</span>
-  </div>
-
-  <div style="height:10px;"></div>
-  <p id="tipsText" style="line-height:1.5; margin:0;"></p>
-  <div class="divider"></div>
-
-  <!-- =========================
-       (2) 낙원 계산기 (인출율 팁 문구 삭제됨)
-      ========================= -->
-  <h2>낙원 계산기</h2>
-  <p>
-    현재 보유한 자산과, 
-    <span style="color:red; font-weight:bold;">연간</span>으로 얼마를 투자하는지 적어주세요.  
-    그럼 은퇴 시점에 얼마의 자산을 가질 수 있는지 계산됩니다.
-  </p>
-
-  <div class="form-group">
-    <label for="B36">보유 자산</label>
-    <input type="text" id="B36" placeholder="예: 100,000,000" />
-    <span>원</span>
-    <span id="B36_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="B37">
-      <span style="color:red; font-weight:bold;">연간</span> 저축 금액
-    </label>
-    <input type="text" id="B37" placeholder="예: 12,000,000" />
-    <span>원</span>
-    <span id="B37_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="B38">기간</label>
-    <input type="number" id="B38" placeholder="예: 25" />
-    <span>년</span>
-  </div>
-  <div class="form-group">
-    <label for="B39">명목 수익률</label>
-    <input type="number" id="B39" placeholder="예: 10" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="B40">저축 증가율<br>(물가 상승률)</label>
-    <input type="number" id="B40" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <p class="hint" style="margin-left:120px;">
-    물가 상승에 맞춰, 저축 금액도 같은 비율로 매년 상승한다고 가정합니다
-  </p>
-
-  <div id="retirementAssetContainer" class="result" style="transition: background-color 0.4s;">
-    은퇴 후 자산: 
-    <span id="resultValue">0원</span>
-    <span id="resultValueDetail" class="detail">(0원)</span>
-    <button id="copyResultBtn" class="material-btn blue-btn">결과 복사하기</button>
-  </div>
-  <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
-
-  <div class="divider"></div>
-
-  <!-- =========================
-       (3) 미래 목돈을 현재로 계산
-      ========================= -->
-  <p>
-    이 돈은 
-    <span id="periodYears">0</span>
-    년 후의 기준 가치입니다. 현재 기준으로는 얼마의 가치일까요? 환산해보겠습니다.
-  </p>
-  <h2>미래 목돈을 현재로 계산</h2>
-
-  <div class="form-group">
-    <label for="B9">미래 가치</label>
-    <input type="text" id="B9" placeholder="0" />
-    <span>원</span>
-    <span id="B9_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="B10">인플레이션</label>
-    <input type="number" id="B10" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="B11">연수</label>
-    <input type="number" id="B11" placeholder="예: 25" />
-    <span>년</span>
-  </div>
-
-  <div class="result">
-    현재 가치: 
-    <span id="presentValue">0원</span>
-    <span id="presentValueDetail" class="detail">(0원)</span>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- =========================
-       (4) 미래 목돈 → 인출 가능한 돈
-      ========================= -->
-  <p>
-    그럼, 위의 돈으로 <span id="withdrawYears">0</span>년 후 매달 얼마를 꺼내서 사용할 수 있을까요?
-  </p>
-  <h2>미래 목돈 → 인출 가능한 돈</h2>
-
-  <div class="form-group">
-    <label for="B16">미래 목돈</label>
-    <input type="text" id="B16" placeholder="0" />
-    <span>원</span>
-    <span id="B16_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="B17">인출율</label>
-    <input type="number" id="B17" value="3.5" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="B18">인플레이션</label>
-    <input type="number" id="B18" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="B19">연수</label>
-    <input type="number" id="B19" placeholder="예: 25" />
-    <span>년</span>
-  </div>
-
-  <div class="result">
-    가능 월 소득: 
-    <span id="possibleIncome">0원</span>
-    <span id="possibleIncomeDetail" class="detail">(0원)</span>
-  </div>
-  <div class="result">
-    현재 가치: 
-    <span id="withdrawPresentValue">0원</span>
-    <span id="withdrawPresentValueDetail" class="detail">(0원)</span>
-  </div>
-
-  <div class="divider"></div>
-
-  <!-- =========================
-       (5) 현재 가치를 미래 가치로 환산
-      ========================= -->
-  <h2>현재 가치를 미래 가치로 환산</h2>
-  <p style="margin-bottom:10px;">
-    예를 들어, 25년 뒤에 자녀에게 4억원을 물려주려면, 인플레이션이 3%일 때 8억 3,751만원이 필요합니다
-  </p>
-
-  <div class="form-group">
-    <label for="FV_B2">현재 가치</label>
-    <input type="text" id="FV_B2" placeholder="예: 400,000,000" />
-    <span>원</span>
-    <span id="FV_B2_million" class="hint">(0원)</span>
-  </div>
-  <div class="form-group">
-    <label for="FV_B3">인플레이션</label>
-    <input type="number" id="FV_B3" placeholder="예: 3" step="0.1" />
-    <span>%</span>
-  </div>
-  <div class="form-group">
-    <label for="FV_B4">연수</label>
-    <input type="number" id="FV_B4" placeholder="예: 25" />
-    <span>년</span>
-  </div>
-
-  <div class="result">
-    미래 가치: 
-    <span id="FV_B5">0원</span>
-    <span id="FV_B5Detail" class="detail">(0원)</span>
-  </div>
-
-  <!-- ===== JS: DOM 아래에 배치 (기능 유지) ===== -->
-  <script>
-    /* (A) 열기/접기 버튼 JS */
-    document.addEventListener("DOMContentLoaded", () => {
-      const toggleBtn = document.getElementById("toggleUsageBtn");
-      const usageBox = document.getElementById("usageBox");
-      toggleBtn.addEventListener("click", () => {
-        if (usageBox.style.display === "none") {
-          usageBox.style.display = "block";
-        } else {
-          usageBox.style.display = "none";
-        }
-      });
-    });
-
-    /* (B) 기존 JS 로직 (수정 금지) */
-    let userModifiedFutureMoney = false;
-
-    function formatKoreanUnits(valueInWon) {
-      if (valueInWon < 10000) {
-        return valueInWon.toLocaleString() + "원";
-      }
-      const UNIT_1MAN = 1e4;
-      const UNIT_1EOK = 1e8;
-      const UNIT_1JO  = 1e12;
-      const UNIT_1GYEONG = 1e16;
-      const UNIT_1HAE = 1e20;
-
-      if (valueInWon >= UNIT_1HAE) {
-        return valueInWon.toLocaleString() + "원";
-      } else if (valueInWon >= UNIT_1GYEONG) {
-        const val = valueInWon / UNIT_1GYEONG;
-        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "경원";
-      } else if (valueInWon >= UNIT_1JO) {
-        const val = valueInWon / UNIT_1JO;
-        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "조원";
-      } else if (valueInWon >= UNIT_1EOK) {
-        const val = valueInWon / UNIT_1EOK;
-        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "억원";
-      } else {
-        const val = valueInWon / UNIT_1MAN;
-        return val.toLocaleString(undefined, { maximumFractionDigits: 2 }) + "만원";
-      }
-    }
-
-    function formatInputAndDisplayUnit(id) {
-      const inputElement = document.getElementById(id);
-      let rawValueString = inputElement.value.replace(/,/g, "");
-      let rawValue = parseFloat(rawValueString) || 0;
-      let formattedValue = rawValue.toLocaleString();
-      inputElement.value = formattedValue;
-      const spanElement = document.getElementById(id + "_million");
-      if (spanElement) {
-        spanElement.textContent = "(" + formatKoreanUnits(rawValue) + ")";
-      }
-    }
-
-    function calculateNeededMoney() {
-      let rawC26 = document.getElementById('C26').value.replace(/,/g, "") || "0";
-      let C26 = parseFloat(rawC26);
-      let C27 = parseFloat(document.getElementById('C27').value) || 0;
-      let C28 = parseInt(document.getElementById('C28').value) || 0;
-      let C29 = parseFloat(document.getElementById('C29').value) || 0;
-
-      let neededMoney = 0;
-      let presentValue = 0;
-      if (C27 > 0) {
-        neededMoney = C26 * 12 * Math.pow(1 + C29/100, C28) / (C27/100);
-      }
-      if (neededMoney > 0) {
-        presentValue = neededMoney / Math.pow(1 + C29/100, C28);
-      }
-
-      const neededMoneyRounded = isNaN(neededMoney) ? 0 : Math.round(neededMoney);
-      const presentValueRounded = isNaN(presentValue) ? 0 : Math.round(presentValue);
-
-      document.getElementById('C31').textContent = formatKoreanUnits(neededMoneyRounded);
-      document.getElementById('C31Detail').textContent =
-        "(" + neededMoneyRounded.toLocaleString() + "원)";
-
-      document.getElementById('C32').textContent = formatKoreanUnits(presentValueRounded);
-      document.getElementById('C32Detail').textContent =
-        "(" + presentValueRounded.toLocaleString() + "원)";
-    }
-
-    function updateTipsText() {
-      // 요청에 따라 기존 '인출율 정하는 팁' 문구는 삭제
-      document.getElementById('tipsText').innerHTML = "";
-    }
-
-    function calculateRetirementAsset() {
-      const rawB36 = document.getElementById('B36').value.replace(/,/g, "") || "0";
-      const rawB37 = document.getElementById('B37').value.replace(/,/g, "") || "0";
-      const B36 = parseFloat(rawB36);
-      const B37 = parseFloat(rawB37);
-      const B38 = parseInt(document.getElementById('B38').value) || 0;
-      const B39 = parseFloat(document.getElementById('B39').value) || 0;
-      const B40 = parseFloat(document.getElementById('B40').value) || 0;
 
       const nominalRate = B39 / 100;
       const savingGrowthRate = B40 / 100;
@@ -1035,7 +517,7 @@
 
     function copyResultToClipboard() {
       const detailText = document.getElementById('resultValueDetail').textContent;
-      const textToCopy = detailText.replace(/$begin:math:text$|$end:math:text$/g, "");
+      const textToCopy = detailText.replace(/\(|\)/g, "");
       navigator.clipboard.writeText(textToCopy)
         .then(() => alert("복사 완료!"))
         .catch(() => alert("복사 실패!"));
@@ -1044,7 +526,7 @@
     function calculatePresentValue() {
       const rawB9  = document.getElementById('B9').value.replace(/,/g, "") || "0";
       const B9  = parseFloat(rawB9);
-      const B10 = parseFloat(document.getElementById('B10').value) || 0;
+      const B10 = parseFloat(document.getElementById('B10').value) || 0; 
       const B11 = parseInt(document.getElementById('B11').value) || 0;
 
       const present = B9 / Math.pow((1 + B10/100), B11);
@@ -1106,7 +588,7 @@
       document.getElementById('B18').value = c29Val.toString();
 
       calculateNeededMoney();
-      updateTipsText();
+      updateTipsText();         
       calculateRetirementAsset();
       calculatePresentValue();
       calculateWithdrawal();
@@ -1265,7 +747,7 @@
 
     // 초기 실행
     calculateNeededMoney();
-    updateTipsText();
+    updateTipsText(); // 내용은 제거됨
     syncFirstSectionToOthers();
     syncFutureValueInputs();
   </script>
