@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
   <meta charset="UTF-8" />
-  <!-- 확대는 허용하되, 자동 확대를 막기 위해 입력 폰트 크기를 16px 이상으로 설정 -->
+  <!-- 반응형 + iOS 확대 방지(폰트 16px 이상) -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>꿈 계산기</title>
   <style>
@@ -70,47 +70,72 @@
     button {
       margin-left: 10px;
       cursor: pointer;
-      font-size: 16px; /* Material-like 버튼에 맞춰 폰트 16px */
+      font-size: 16px; /* 버튼 폰트 16px */
     }
     /* 입력 요소 폰트 크기를 16px 이상으로 설정 (자동 확대 방지) */
     input, select, textarea {
       font-size: 16px;
     }
 
-    /* 추가: Material-like 버튼 스타일 (원하면 더 꾸며도 됨) */
+    /* Material-like 버튼 공통 스타일 */
     .material-btn {
-      background-color: #2196F3;
       border: none;
       color: #fff;
       border-radius: 4px;
       padding: 8px 16px;
       transition: background-color 0.2s ease;
+      cursor: pointer;
     }
     .material-btn:hover {
-      background-color: #1976D2;
+      opacity: 0.9; /* 간단히 hover 시 약간 투명하게 */
+    }
+    /* 파란색 버튼 */
+    .blue-btn {
+      background-color: #2196F3;
+    }
+    /* 네이버 블로그 초록색 버튼 */
+    .naver-btn {
+      background-color: #00C73C; /* 네이버 블로그 색상 */
     }
   </style>
 </head>
 <body>
 
   <!-- =========================
-       (0) 안내문 열기/접기 버튼 + 숨겨진 안내문
+       (0) "꿈 계산기" 제목
       ========================= -->
-  <button id="toggleUsageBtn" class="material-btn" style="margin: 20px 0;">
+  <h1>꿈 계산기</h1>
+
+  <!-- =========================
+       (0-A) 열기/접기 버튼 (파란색)
+      ========================= -->
+  <button id="toggleUsageBtn" class="material-btn blue-btn" style="margin: 20px 0;">
     처음 오셨다면 이 글부터 읽어주세요 → 사용법 (✈️)
   </button>
 
+  <!-- =========================
+       (0-B) 네이버 블로그 링크 버튼 (초록색)
+      ========================= -->
+  <button id="blogLinkBtn" class="material-btn naver-btn" style="margin: 10px 0;"
+    onclick="window.open('https://m.blog.naver.com/kgh_investment','_blank');">
+    네이버 블로그 무료 칼럼 모음
+  </button>
+
+  <!-- =========================
+       (0-C) 숨겨진 안내문 (display:none)
+      ========================= -->
   <div id="usageBox" style="display:none; margin-top:10px; line-height:1.5;">
     <p>
-      당신이 꿈꾸는 미래가 왔습니다. 한 달에 얼마를 사용하고 있나요?
+      <span style="background-color:yellow;">당신이 꿈꾸는 미래가 왔습니다.</span> 한 달에 얼마를 사용하고 있나요?
       <br><br>
       예를 들어, ‘20년 뒤에 은퇴할 때, 나는 3달에 한 번은 해외여행을 다닐거야.
       그러면 적어도 월 450만원은 사용하고 싶다‘ 라고 해보겠습니다.
     </p>
     <p>
-      이 때, 월 450만원은 현재 가치로 450만원이라고 해보겠습니다. 20년 뒤 450만원은 
-      현재 가치로는 249만원입니다. 따라서, 머리 아프게 계산하지 말고,
-      ‘현재 가치 기준으로 미래에 원하는 월 생활비’를 입력하세요.
+      이 때, 월 450만원은 <span style="background-color:yellow;">현재 가치 기준으로</span> 450만원이라고 해보겠습니다.
+      20년 뒤 450만원은 현재 가치로는 249만원입니다.
+      따라서, 머리 아프게 계산하지 말고,
+      ‘<span style="background-color:yellow;">현재 가치 기준으로</span> 미래에 원하는 월 생활비’를 입력하세요.
     </p>
     <p>
       ‘돈을 그냥 꺼내 써도 되나?’라는 생각이 드실 수도 있습니다. 
@@ -118,8 +143,8 @@
       그런데 만약 월 450만원을 사용해도 자산이 계속 늘어나서 그런 삶을 유지할 수 있다면 어떨까요?
     </p>
     <p>
-      원금이 줄어든다고요? 하지만 예를 들어, 20억원이 있고 연평균 수익률이 10%라면 
-      매년 2억원을 사용해도 될 겁니다.
+      <span style="background-color:yellow;">원금이 줄어든다고요?</span> 하지만 예를 들어, 20억원이 있고
+      연평균 수익률이 10%라면 매년 2억원을 사용해도 될 겁니다.
     </p>
     <p>
       ’하지만 물가가 오르면 어떻게 해? 돈의 가치는 계속 줄어들잖아‘ <br>
@@ -129,7 +154,7 @@
       맞습니다. 그래서 수익 전체를 꺼내써선 안 됩니다.
     </p>
     <p>
-      매년 3% 만큼은 물가가 오르는 것에 대비하여 가만히 두세요.
+      <span style="background-color:yellow;">매년 3% 만큼은</span> 물가가 오르는 것에 대비하여 가만히 두세요.
       <br><br>
       그리고 나머지 중 일부만 인출하고, 또 일부는 자산 자체의 가치가 상승하도록 남겨두세요.
     </p>
@@ -139,8 +164,8 @@
       그럼 인출율은 몇 %로 정하면 좋을까요?
     </p>
     <p>
-      인출율 정하는 팁 : 0년 뒤에도 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 
-      인출율 4%도 괜찮습니다.
+      인출율 정하는 팁 : <span style="background-color:yellow;">은퇴 시점에</span> 부업이나 근로소득으로
+      생활비의 일부라도 충당할 수 있을 것으로 보인다면 인출율 4%도 괜찮습니다.
       <br><br>
       하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 3.5%로 설정하는 것을 추천합니다.
     </p>
@@ -149,7 +174,6 @@
   <!-- =========================
        (1) 원하는 월 생활비 → 미래에 필요한 목돈
       ========================= -->
-  <h1>꿈 계산기</h1>
   <p>
     현재의 물가로, 얼마의 월 생활비를 원하시나요? 필요한 목돈을 계산해드립니다.
   </p>
@@ -192,7 +216,7 @@
   <!-- 한 줄 간격 -->
   <div style="height:10px;"></div>
 
-  <!-- 추가된 안내문 (4%와 3.5%만 빨간색) -->
+  <!-- tipsText는 사용하지 않으므로 비워둠 -->
   <p id="tipsText" style="line-height:1.5; margin:0;"></p>
 
   <!-- 구분선 -->
@@ -200,6 +224,7 @@
 
   <!-- =========================
        (2) 낙원 계산기 (제목만 바뀐 상태)
+       (인출율 정하는 팁 문구는 삭제)
       ========================= -->
   <h2>낙원 계산기</h2>
   <p>
@@ -245,7 +270,7 @@
     은퇴 후 자산: 
     <span id="resultValue">0원</span>
     <span id="resultValueDetail" class="detail">(0원)</span>
-    <button id="copyResultBtn">결과 복사하기</button>
+    <button id="copyResultBtn" class="material-btn blue-btn">결과 복사하기</button>
   </div>
   <div id="retirementAssetMsg" style="margin-top:5px; font-weight:normal;"></div>
 
@@ -362,11 +387,10 @@
 
   <!-- ===== JS: DOM 아래에 배치 ===== -->
   <script>
-    /* 1) 추가: 열기/접기 기능 JS */
+    /* (A) 열기/접기 버튼 JS */
     document.addEventListener("DOMContentLoaded", () => {
       const toggleBtn = document.getElementById("toggleUsageBtn");
       const usageBox = document.getElementById("usageBox");
-
       toggleBtn.addEventListener("click", () => {
         if (usageBox.style.display === "none") {
           usageBox.style.display = "block";
@@ -376,7 +400,7 @@
       });
     });
 
-    /* 2) 기존 JS 로직 (수정 X) */
+    /* (B) 기존 JS 로직 (수정 금지) */
     let userModifiedFutureMoney = false;
 
     function formatKoreanUnits(valueInWon) {
@@ -446,12 +470,9 @@
         "(" + presentValueRounded.toLocaleString() + "원)";
     }
 
+    /* '낙원 계산기' 위 텍스트였던 updateTipsText는 비워둠 */
     function updateTipsText() {
-      const c28Val = parseInt(document.getElementById('C28').value) || 0;
-      const tipHtml = 
-        `인출율 정하는 팁 : ${c28Val}년 뒤에도 부업이나 근로소득으로 생활비의 일부라도 충당할 수 있을 것으로 보인다면 인출율 <span style="color:red;">4%</span>도 괜찮습니다.<br><br>` +
-        `하지만 ‘완전한 은퇴’를 꿈꾼다면 보수적으로 인출율 <span style="color:red;">3.5%</span>로 설정하는 것을 추천합니다.`;
-      document.getElementById('tipsText').innerHTML = tipHtml;
+      document.getElementById('tipsText').innerHTML = "";
     }
 
     function calculateRetirementAsset() {
@@ -726,7 +747,7 @@
 
     // 초기 실행
     calculateNeededMoney();
-    updateTipsText();
+    updateTipsText(); // 내용은 제거됨
     syncFirstSectionToOthers();
     syncFutureValueInputs();
   </script>
